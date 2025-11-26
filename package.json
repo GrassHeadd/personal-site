@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -16,31 +16,31 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
     "@react-three/postprocessing": "^3.0.4",
-    "@tailwindcss/vite": "^4.1.17",
     "gsap": "^3.13.0",
+    "next": "^16.0.3",
     "prop-types": "^15.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.6",
+    "react-intersection-observer": "^10.0.0",
+    "react-responsive": "^10.0.1",
     "tailwindcss": "^4.1.17",
-    "three": "^0.181.2"
+    "three": "^0.181.2",
+    "three-stdlib": "^2.36.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "@types/react-router-dom": "^5.3.3",
     "@types/react-vertical-timeline-component": "^3.3.6",
     "@types/three": "^0.181.0",
-    "@vitejs/plugin-react": "^5.1.0",
     "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.3",
-    "vite": "^7.2.2",
-    "vite-plugin-static-copy": "^3.1.4"
+    "typescript-eslint": "^8.46.3"
   }
 }
