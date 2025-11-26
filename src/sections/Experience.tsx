@@ -49,7 +49,7 @@ const Experience = () => {
         <div className="mt-32 relative">
           {/* Timeline line */}
           <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-1 h-full">
-            <div className="timeline-line absolute w-full bg-gradient-to-b from-[#8B5CF6] via-[#A855F7] to-[#F59E0B] scale-y-0 h-full" />
+            <div className="timeline-line absolute w-full bg-gradient-to-b from-[#3b82f6] via-[#60a5fa] to-[#f59e0b] scale-y-0 h-full" />
             <div className="absolute w-full h-full bg-black-50 opacity-30" />
           </div>
 

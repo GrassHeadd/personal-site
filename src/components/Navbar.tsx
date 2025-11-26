@@ -26,10 +26,6 @@ const NavBar = () => {
   return (
     <header className={`navbar ${scrolled ? "scrolled" : "not-scrolled"}`}>
       <div className="inner">
-        <a href="#hero" className="logo">
-          JJ
-        </a>
-
         <nav className="desktop">
           <ul>
             {navLinks.map(({ link, name }) => (

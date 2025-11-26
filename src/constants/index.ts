@@ -1,4 +1,4 @@
-import type { NavLink, Word, ExpCard } from "../types";
+import type { NavLink, ExpCard } from "../types";
 
 const navLinks: NavLink[] = [
   { name: "Work", link: "#work" },
@@ -6,20 +6,8 @@ const navLinks: NavLink[] = [
   { name: "Skills", link: "#skills" },
 ];
 
-const words: Word[] = [
-  { text: "Ideas", imgPath: "/images/ideas.svg" },
-  { text: "Concepts", imgPath: "/images/concepts.svg" },
-  { text: "Designs", imgPath: "/images/designs.svg" },
-  { text: "Code", imgPath: "/images/code.svg" },
-  { text: "Ideas", imgPath: "/images/ideas.svg" },
-  { text: "Concepts", imgPath: "/images/concepts.svg" },
-  { text: "Designs", imgPath: "/images/designs.svg" },
-  { text: "Code", imgPath: "/images/code.svg" },
-];
-
 const expCards: ExpCard[] = [
   {
-    review: "Building AI document tools at an early-stage startup.",
     title: "Member of Technical Staff",
     company: "Didero.ai",
     date: "Aug 2025 - Present",
@@ -29,7 +17,6 @@ const expCards: ExpCard[] = [
     ],
   },
   {
-    review: "Training SEA's largest open-source LLM.",
     title: "AI Engineer Intern",
     company: "AI Singapore",
     date: "May - Aug 2025",
@@ -40,7 +27,6 @@ const expCards: ExpCard[] = [
     ],
   },
   {
-    review: "AI research for education.",
     title: "Software Engineer Intern",
     company: "SUSS",
     date: "Jan - May 2025",
@@ -50,7 +36,6 @@ const expCards: ExpCard[] = [
     ],
   },
   {
-    review: "0 to 1 AI startup.",
     title: "Co-founder",
     company: "M.AI",
     date: "Apr 2024 - May 2025",
@@ -61,4 +46,4 @@ const expCards: ExpCard[] = [
   },
 ];
 
-export { words, expCards, navLinks };
+export { expCards, navLinks };

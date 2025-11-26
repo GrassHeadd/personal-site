@@ -61,7 +61,7 @@ const TechStack = () => {
                 {skill.techs.map((tech) => (
                   <span
                     key={tech}
-                    className="px-3 py-1 text-sm bg-black-200 rounded-full text-white-50 hover:bg-[#8B5CF6]/20 hover:text-[#8B5CF6] transition-colors"
+                    className="px-3 py-1 text-sm bg-black-200 rounded-full text-white-50 hover:bg-[#3b82f6]/20 hover:text-[#3b82f6] transition-colors"
                   >
                     {tech}
                   </span>

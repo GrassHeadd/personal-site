@@ -1,5 +1,4 @@
 'use client';
-import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -32,8 +31,6 @@ const projects = [
 ];
 
 const ShowcaseSection = () => {
-  const sectionRef = useRef(null);
-
   useGSAP(() => {
     gsap.fromTo(
       ".project-card",
@@ -53,7 +50,7 @@ const ShowcaseSection = () => {
   }, []);
 
   return (
-    <section id="work" ref={sectionRef} className="section-padding">
+    <section id="work" className="section-padding">
       <div className="w-full md:px-20 px-5">
         <TitleHeader
           title="Featured Projects"
@@ -72,12 +69,12 @@ const ShowcaseSection = () => {
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-[#8B5CF6] transition-colors">
+                  <h3 className="text-xl font-bold text-white group-hover:text-[#3b82f6] transition-colors">
                     {project.title}
                   </h3>
                   <span className="text-sm text-white-50">{project.type}</span>
                 </div>
-                <span className="text-white-50 group-hover:text-[#8B5CF6] group-hover:translate-x-1 transition-all">
+                <span className="text-white-50 group-hover:text-[#3b82f6] group-hover:translate-x-1 transition-all">
                   →
                 </span>
               </div>

@@ -3,40 +3,30 @@ import * as THREE from "three";
 
 const HeroLights = () => (
   <>
-    {/* lamp's light */}
+    {/* warm desk lamp */}
     <spotLight
-      position={[2, 5, 6]}
-      angle={0.15}
-      penumbra={0.2}
-      intensity={100}
-      color="white"
-    />
-    {/* bluish overhead lamp */}
-    <spotLight
-      position={[4, 5, 4]}
+      position={[2, 4, 5]}
       angle={0.3}
       penumbra={0.5}
-      intensity={40}
-      color="#4cc9f0"
-    />
-    {/* purplish side fill */}
-    <spotLight
-      position={[-3, 5, 5]}
-      angle={0.4}
-      penumbra={1}
       intensity={60}
-      color="#9d4edd"
+      color="#ffc266"
     />
-    {/* area light for soft moody fill */}
+    {/* soft monitor glow */}
+    <pointLight position={[0, 1.5, 2]} intensity={15} color="#e0e8ff" />
+    {/* blue mood light */}
+    <spotLight
+      position={[-3, 4, 3]}
+      angle={0.5}
+      penumbra={1}
+      intensity={25}
+      color="#3b82f6"
+    />
+    {/* soft blue fill from side */}
     <primitive
-      object={new THREE.RectAreaLight("#a259ff", 8, 3, 2)}
-      position={[1, 3, 4]}
-      rotation={[-Math.PI / 4, Math.PI / 4, 0]}
-      intensity={15}
+      object={new THREE.RectAreaLight("#6090c0", 3, 2, 1.5)}
+      position={[0, 2, 3]}
+      rotation={[-Math.PI / 6, 0, 0]}
     />
-    {/* subtle point light for atmospheric tone */}
-    <pointLight position={[0, 1, 0]} intensity={10} color="#7209b7" />
-    <pointLight position={[1, 2, -2]} intensity={10} color="#0d00a4" />
   </>
 );
 

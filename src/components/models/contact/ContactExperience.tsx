@@ -24,16 +24,44 @@ const ContactExperience = () => {
         maxPolarAngle={Math.PI / 2}
       />
 
-      <group scale={[1, 1, 1]}>
-        <mesh
-          receiveShadow
-          position={[0, -1.5, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <planeGeometry args={[30, 30]} />
-          <meshStandardMaterial color="#a46b2d" />
-        </mesh>
-      </group>
+      {/* Floor - wooden */}
+      <mesh
+        receiveShadow
+        position={[0, -1.5, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <planeGeometry args={[30, 30]} />
+        <meshStandardMaterial color="#5c3d2e" />
+      </mesh>
+
+      {/* Back wall - cream/off-white */}
+      <mesh
+        receiveShadow
+        position={[0, 6, -8]}
+      >
+        <planeGeometry args={[30, 15]} />
+        <meshStandardMaterial color="#e8e0d5" />
+      </mesh>
+
+      {/* Left wall */}
+      <mesh
+        receiveShadow
+        position={[-10, 6, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+      >
+        <planeGeometry args={[30, 15]} />
+        <meshStandardMaterial color="#ddd5ca" />
+      </mesh>
+
+      {/* Right wall */}
+      <mesh
+        receiveShadow
+        position={[10, 6, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+      >
+        <planeGeometry args={[30, 15]} />
+        <meshStandardMaterial color="#ddd5ca" />
+      </mesh>
 
       <group scale={0.03} position={[0, -1.49, -2]} castShadow>
         <Computer />

@@ -3,13 +3,7 @@ export interface NavLink {
   link: string;
 }
 
-export interface Word {
-  text: string;
-  imgPath: string;
-}
-
 export interface ExpCard {
-  review: string;
   title: string;
   company: string;
   date: string;

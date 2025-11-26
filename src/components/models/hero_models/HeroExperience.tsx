@@ -1,4 +1,5 @@
-"use client";
+'use client';
+import { Suspense } from "react";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMediaQuery } from "react-responsive";
@@ -6,16 +7,14 @@ import { useMediaQuery } from "react-responsive";
 import { Room } from "./Room";
 import HeroLights from "./HeroLights";
 import Particles from "./Particles";
-import { Suspense } from "react";
 
 const HeroExperience = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
     <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-      {/* deep blue ambient */}
-      <ambientLight intensity={0.2} color="#1a1a40" />
+      {/* subtle ambient for night vibe */}
+      <ambientLight intensity={0.1} color="#0a1628" />
       {/* Configure OrbitControls to disable panning and control zoom based on device type */}
       <OrbitControls
         enablePan={false}
