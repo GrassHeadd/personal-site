@@ -40,7 +40,7 @@ const Contact = () => {
       // Reset form and stop loading
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error("EmailJS Error:", error); // Optional: show toast
+      console.error("EmailJS Error:", error);
     } finally {
       setLoading(false); // Always stop loading, even on error
     }
