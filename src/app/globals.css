@@ -2,19 +2,19 @@
 @import "tailwindcss";
 
 :root {
-  --gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #f59e0b 100%);
-  --blue: #3b82f6;
-  --blue-hover: #2563eb;
-  --gold: #f59e0b;
-  --gold-hover: #d97706;
+  --gradient: linear-gradient(135deg, #4C7A55 0%, #8BA989 50%, #F4A259 100%);
+  --sage: #8BA989;
+  --forest: #4C7A55;
+  --amber: #F4A259;
+  --amber-hover: #e08f47;
 }
 
 html,
 body {
   width: 100dvw;
   overflow-x: hidden;
-  background: #0a0f1a;
-  color: white;
+  background: #0C0A09;
+  color: #F5F0E8;
   scroll-behavior: smooth;
   font-family: "Mona Sans", sans-serif;
 }
@@ -26,13 +26,14 @@ section {
 @theme {
   --font-sans: "Mona Sans", sans-serif;
   --color-white-50: #a8a29e;
-  --color-black-50: #1c1c21;
-  --color-black-100: #0a0f1a;
-  --color-black-200: #111827;
-  --color-blue: #3b82f6;
-  --color-blue-hover: #2563eb;
-  --color-gold: #f59e0b;
-  --color-gold-hover: #d97706;
+  --color-cream: #F5F0E8;
+  --color-black-50: #1c1c1a;
+  --color-black-100: #0C0A09;
+  --color-black-200: #171412;
+  --color-sage: #8BA989;
+  --color-forest: #4C7A55;
+  --color-amber: #F4A259;
+  --color-amber-hover: #e08f47;
 }
 
 @layer utilities {
@@ -88,20 +89,15 @@ section {
     }
 
     nav.desktop {
-      @apply hidden lg:flex items-center;
+      @apply flex items-center gap-4;
 
       ul {
-        @apply flex space-x-8;
+        @apply flex gap-2 md:gap-3;
 
         li {
-          @apply text-white-50 relative;
-
-          span {
-            @apply transition-colors duration-300 hover:text-[#3b82f6];
-          }
-
-          .underline {
-            @apply absolute -bottom-1 left-0 w-0 h-0.5 bg-[#3b82f6] transition-all duration-300 group-hover:w-full;
+          a {
+            @apply px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg border border-[#8BA989] text-[#8BA989] font-medium
+              hover:bg-[#8BA989] hover:text-[#0C0A09] transition-all duration-300;
           }
         }
       }
@@ -111,10 +107,11 @@ section {
       @apply flex;
 
       .inner {
-        @apply px-5 py-2 rounded-lg bg-[#F59E0B] text-black group-hover:bg-[#D97706] transition-colors duration-300;
+        @apply px-5 py-2 rounded-lg bg-[#F4A259] text-[#0C0A09] font-medium
+          group-hover:bg-[#e08f47] transition-colors duration-300;
 
         span {
-          @apply group-hover:text-white transition-colors duration-300;
+          @apply group-hover:text-[#0C0A09] transition-colors duration-300;
         }
       }
     }
@@ -126,21 +123,21 @@ section {
   }
 
   .cta-button {
-    @apply px-4 py-4 rounded-lg bg-[#3b82f6] flex justify-center items-center relative cursor-pointer overflow-hidden;
+    @apply px-4 py-4 rounded-lg bg-[#F4A259] flex justify-center items-center relative cursor-pointer overflow-hidden;
 
     .bg-circle {
       @apply absolute -right-10 origin-center top-1/2 -translate-y-1/2
         w-[120%] h-[120%] group-hover:size-10 group-hover:right-10
-        rounded-full bg-[#2563eb] transition-all duration-500;
+        rounded-full bg-[#e08f47] transition-all duration-500;
     }
 
     .text {
-      @apply uppercase md:text-lg text-white transition-all duration-500
-        group-hover:text-white group-hover:-translate-x-5 xl:translate-x-0 -translate-x-5;
+      @apply uppercase md:text-lg text-[#0C0A09] transition-all duration-500
+        group-hover:text-[#0C0A09] group-hover:-translate-x-5 xl:translate-x-0 -translate-x-5;
     }
 
     .arrow-wrapper {
-      @apply group-hover:bg-[#2563eb] size-10 rounded-full absolute right-10 top-1/2
+      @apply group-hover:bg-[#e08f47] size-10 rounded-full absolute right-10 top-1/2
         -translate-y-1/2 flex justify-center items-center overflow-hidden;
 
       img {
@@ -150,21 +147,21 @@ section {
   }
 
   .cta-button-orange {
-    @apply px-4 py-4 rounded-lg bg-[#F59E0B] flex justify-center items-center relative cursor-pointer overflow-hidden;
+    @apply px-4 py-4 rounded-lg bg-[#F4A259] flex justify-center items-center relative cursor-pointer overflow-hidden;
 
     .bg-circle {
       @apply absolute -right-10 origin-center top-1/2 -translate-y-1/2
         w-[120%] h-[120%] group-hover:size-10 group-hover:right-10
-        rounded-full bg-[#D97706] transition-all duration-500;
+        rounded-full bg-[#e08f47] transition-all duration-500;
     }
 
     .text {
-      @apply uppercase md:text-lg text-black transition-all duration-500
-        group-hover:text-white group-hover:-translate-x-5 xl:translate-x-0 -translate-x-5;
+      @apply uppercase md:text-lg text-[#0C0A09] transition-all duration-500
+        group-hover:text-[#0C0A09] group-hover:-translate-x-5 xl:translate-x-0 -translate-x-5;
     }
 
     .arrow-wrapper {
-      @apply group-hover:bg-[#D97706] size-10 rounded-full absolute right-10 top-1/2
+      @apply group-hover:bg-[#e08f47] size-10 rounded-full absolute right-10 top-1/2
         -translate-y-1/2 flex justify-center items-center overflow-hidden;
 
       img {
@@ -252,6 +249,7 @@ section {
   mask-clip: padding-box, border-box;
   opacity: 0;
   transition: 0.5s ease;
+  pointer-events: none;
 }
 
 .glow {
@@ -264,6 +262,7 @@ section {
   transform: translate(-50%, -50%);
   filter: blur(10px);
   filter: saturate(200);
+  z-index: -1;
 }
 
 .card:hover::before {

@@ -13,8 +13,8 @@ const HeroExperience = () => {
 
   return (
     <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-      {/* subtle ambient for night vibe */}
-      <ambientLight intensity={0.1} color="#0a1628" />
+      {/* subtle warm ambient */}
+      <ambientLight intensity={0.1} color="#1a1814" />
       {/* Configure OrbitControls to disable panning and control zoom based on device type */}
       <OrbitControls
         enablePan={false}

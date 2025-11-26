@@ -26,14 +26,15 @@ const NavBar = () => {
   return (
     <header className={`navbar ${scrolled ? "scrolled" : "not-scrolled"}`}>
       <div className="inner">
+        <a href="/" className="text-[#F5F0E8] text-xl md:text-2xl font-semibold hover:text-[#8BA989] transition-colors">
+          Grasshut<span className="text-[#8BA989]">.</span>
+        </a>
+
         <nav className="desktop">
           <ul>
             {navLinks.map(({ link, name }) => (
-              <li key={name} className="group">
-                <a href={link}>
-                  <span>{name}</span>
-                  <span className="underline" />
-                </a>
+              <li key={name}>
+                <a href={link}>{name}</a>
               </li>
             ))}
           </ul>

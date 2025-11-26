@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
@@ -10,7 +10,7 @@ const Hero = () => {
     gsap.fromTo(
       ".hero-text h1",
       { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.inOut" }
+      { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.inOut" },
     );
   });
 
@@ -25,21 +25,23 @@ const Hero = () => {
           <div className="flex flex-col gap-5">
             <div className="hero-text">
               <h1>Welcome to</h1>
-              <h1 className="text-[#3b82f6]">the Grasshut</h1>
+              <h1 className="text-[#8BA989]">JJ's Grasshut</h1>
             </div>
 
             <p className="text-white-50 md:text-xl relative z-10 pointer-events-none max-w-lg">
-              I&apos;m JJ — a Full Stack Developer and AI tinkerer who builds things that (hopefully) work.
+              I&apos;m JJ, Full Stack Developer and AI tinkerer who builds
+              things that (hopefully) work.
             </p>
 
             <p className="text-white-50 text-sm md:text-base relative z-10 pointer-events-none max-w-md opacity-70">
-              This is my corner of the internet. Poke around for projects, experiments, and the occasional ramble.
+              This is my corner of the internet. Poke around for projects,
+              experiments, and the occasional ramble.
             </p>
 
             <Button
               text="See My Work"
               className="md:w-80 md:h-16 w-60 h-12"
-              id="work"
+              id="experience"
             />
           </div>
         </header>
@@ -51,7 +53,6 @@ const Hero = () => {
           </div>
         </figure>
       </div>
-
     </section>
   );
 };

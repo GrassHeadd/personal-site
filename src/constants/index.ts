@@ -1,9 +1,8 @@
 import type { NavLink, ExpCard } from "../types";
 
 const navLinks: NavLink[] = [
-  { name: "Work", link: "#work" },
-  { name: "Experience", link: "#experience" },
-  { name: "Skills", link: "#skills" },
+  { name: "App Hub", link: "/projects" },
+  { name: "Blog", link: "/blog" },
 ];
 
 const expCards: ExpCard[] = [
@@ -12,8 +11,8 @@ const expCards: ExpCard[] = [
     company: "Didero.ai",
     date: "Aug 2025 - Present",
     responsibilities: [
-      "Built document comparison platform end-to-end",
-      "Designed AI-powered field resolution engine with Django",
+      "AI-powered procurement platform for enterprise sourcing",
+      "Building AI Agents and ship product features end-to-end",
     ],
   },
   {
@@ -21,9 +20,9 @@ const expCards: ExpCard[] = [
     company: "AI Singapore",
     date: "May - Aug 2025",
     responsibilities: [
-      "SEA-LION v4 post-training team",
-      "Built multi-agent reward pipeline with LangGraph",
-      "Created code judging agent (+30% accuracy)",
+      "National AI research program developing SEA-LION, Southeast Asia's multilingual LLM",
+      "Built multi-agent reward pipeline with LangGraph for model post-training",
+      "Created code judging agent that improved evaluation accuracy by 30%",
     ],
   },
   {
@@ -31,8 +30,9 @@ const expCards: ExpCard[] = [
     company: "SUSS",
     date: "Jan - May 2025",
     responsibilities: [
-      "Built RAG system for auto-grading with DSPy",
-      "Researched AI tools for classroom use",
+      "Singapore's leading university for lifelong learning and adult education",
+      "Built RAG-based auto-grading system with DSPy to streamline assessments",
+      "Researched and evaluated AI tools to enhance classroom teaching",
     ],
   },
   {
@@ -40,8 +40,8 @@ const expCards: ExpCard[] = [
     company: "M.AI",
     date: "Apr 2024 - May 2025",
     responsibilities: [
-      "AI app for short-form video marketing",
-      "SMU BIG incubator (top 30/138)",
+      "AI startup automating short-form video marketing for businesses",
+      "Led product development and secured spot in SMU BIG incubator (top 30/138)",
     ],
   },
 ];
