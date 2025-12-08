@@ -72,7 +72,7 @@ export default function Talkerinos() {
                   slug={post.Slug}
                   title={post.Title}
                   content={post.Content}
-                  date={post.PublishedAt?.Time || post.CreatedAt}
+                  date={post.PublishedAt?.Valid ? post.PublishedAt.Time : post.CreatedAt}
                   index={index}
                 />
               ))}

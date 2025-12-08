@@ -107,7 +107,7 @@ export default function PostPage() {
               {post.Title}
             </h1>
             <time className="text-white-50">
-              {formatDate(post.PublishedAt?.Time || post.CreatedAt)}
+              {formatDate(post.PublishedAt?.Valid ? post.PublishedAt.Time : post.CreatedAt)}
             </time>
           </header>
 

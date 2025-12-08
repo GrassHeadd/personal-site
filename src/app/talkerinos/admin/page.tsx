@@ -35,22 +35,18 @@ export default function TalkerinosAdmin() {
     if (storedKey) {
       setApiKey(storedKey);
       setIsAuthed(true);
+      fetchAllPosts(storedKey);
     }
   }, []);
 
-  useEffect(() => {
-    if (isAuthed) {
-      fetchAllPosts();
-    }
-  }, [isAuthed]);
-
-  const fetchAllPosts = async () => {
+  const fetchAllPosts = async (key?: string) => {
+    const keyToUse = key || apiKey;
     setLoading(true);
     setError(null);
     try {
       const [publishedPosts, draftPosts] = await Promise.all([
         getPosts(),
-        getDrafts(apiKey),
+        getDrafts(keyToUse),
       ]);
       setPosts(publishedPosts || []);
       setDrafts(draftPosts || []);
@@ -67,6 +63,7 @@ export default function TalkerinosAdmin() {
     if (apiKey.trim()) {
       localStorage.setItem("talkerinos_api_key", apiKey);
       setIsAuthed(true);
+      fetchAllPosts(apiKey);
     }
   };
 
@@ -328,7 +325,7 @@ export default function TalkerinosAdmin() {
                   {/* Drafts */}
                   {drafts.length > 0 && (
                     <div className="mb-10">
-                      <h2 className="text-xl font-semibold text-gold mb-4">
+                      <h2 className="text-xl font-semibold text-amber mb-4">
                         Drafts ({drafts.length})
                       </h2>
                       <div className="space-y-3">
@@ -461,7 +458,7 @@ function PostRow({
       <div className="flex-1 min-w-0">
         <h3 className="text-white font-medium truncate">{post.Title}</h3>
         <p className="text-white-50 text-sm">
-          {formatDate(post.PublishedAt?.Time || post.CreatedAt)} &middot;{" "}
+          {formatDate(post.PublishedAt?.Valid ? post.PublishedAt.Time : post.CreatedAt)} &middot;{" "}
           <span className="font-mono text-xs">/talkerinos/{post.Slug}</span>
         </p>
       </div>
@@ -476,7 +473,7 @@ function PostRow({
           onClick={onTogglePublish}
           className={`px-3 py-1.5 text-sm rounded border transition-colors ${
             post.Published
-              ? "border-gold text-gold hover:bg-gold/10"
+              ? "border-gold text-amber hover:bg-gold/10"
               : "border-sage text-sage hover:bg-sage/10"
           }`}
         >
