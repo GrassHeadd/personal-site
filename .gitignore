@@ -35,6 +35,7 @@ out
 *.njsproj
 *.sln
 *.sw?
+.claude
 
 # OS files
 Thumbs.db
