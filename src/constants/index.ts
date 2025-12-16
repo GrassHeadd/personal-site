@@ -11,8 +11,10 @@ const expCards: ExpCard[] = [
     company: "Didero.ai",
     date: "Aug 2025 - Present",
     responsibilities: [
-      "AI-powered procurement platform for enterprise sourcing",
+      "AI-powered procurement agent",
       "Building AI Agents and ship product features end-to-end",
+      "B2B SAAS arc type shit",
+      "Also enjoying New York City while I'm at it",
     ],
   },
   {
@@ -20,9 +22,11 @@ const expCards: ExpCard[] = [
     company: "AI Singapore",
     date: "May - Aug 2025",
     responsibilities: [
-      "National AI research program developing SEA-LION, Southeast Asia's multilingual LLM",
+      "AI research program developing SEA-LION v4, Southeast Asia's multilingual LLM",
       "Built multi-agent reward pipeline with LangGraph for model post-training",
       "Created code judging agent that improved evaluation accuracy by 30%",
+      "Experiment with RLHF solutions including PPO, GRPO, DAPO",
+      "Highkey learnt a lot about AI here lmao",
     ],
   },
   {
@@ -31,17 +35,9 @@ const expCards: ExpCard[] = [
     date: "Jan - May 2025",
     responsibilities: [
       "Singapore's leading university for lifelong learning and adult education",
-      "Built RAG-based auto-grading system with DSPy to streamline assessments",
+      "Built RAG-based system with DSPy for various activities",
+      "Built AI Scrappers to scrape open dynamic websites",
       "Researched and evaluated AI tools to enhance classroom teaching",
-    ],
-  },
-  {
-    title: "Co-founder",
-    company: "M.AI",
-    date: "Apr 2024 - May 2025",
-    responsibilities: [
-      "AI startup automating short-form video marketing for businesses",
-      "Led product development and secured spot in SMU BIG incubator (top 30/138)",
     ],
   },
 ];
