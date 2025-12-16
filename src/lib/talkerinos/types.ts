@@ -8,3 +8,19 @@ export interface Post {
   CreatedAt: string;
   UpdatedAt: string;
 }
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  selectedText?: string;
+}
+
+export interface ChatResponseChunk {
+  Content: string;
+  Done: boolean;
+  Error?: string;
+  Suggestion?: {
+    Original: string;
+    Rewritten: string;
+  };
+}

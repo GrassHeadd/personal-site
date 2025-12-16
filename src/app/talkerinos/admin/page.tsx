@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/sections/Footer";
 import {
@@ -15,6 +16,7 @@ import {
 type View = "list" | "create" | "edit";
 
 export default function TalkerinosAdmin() {
+  const router = useRouter();
   const [apiKey, setApiKey] = useState("");
   const [isAuthed, setIsAuthed] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -189,13 +191,7 @@ export default function TalkerinosAdmin() {
   };
 
   const startEdit = (post: Post) => {
-    setEditingPost(post);
-    setTitle(post.Title);
-    setSlug(post.Slug);
-    setContent(post.Content);
-    setView("edit");
-    setError(null);
-    setSuccess(null);
+    router.push(`/talkerinos/admin/edit/${post.ID}`);
   };
 
   const formatDate = (dateStr: string) => {
@@ -319,7 +315,9 @@ export default function TalkerinosAdmin() {
           {view === "list" && (
             <>
               {loading ? (
-                <div className="text-center py-20 text-white-50">Loading...</div>
+                <div className="text-center py-20 text-white-50">
+                  Loading...
+                </div>
               ) : (
                 <>
                   {/* Drafts */}
@@ -393,9 +391,7 @@ export default function TalkerinosAdmin() {
               </div>
 
               <div>
-                <label className="block text-white-50 text-sm mb-2">
-                  Slug
-                </label>
+                <label className="block text-white-50 text-sm mb-2">Slug</label>
                 <input
                   type="text"
                   value={slug}
@@ -427,8 +423,8 @@ export default function TalkerinosAdmin() {
                   {loading
                     ? "Saving..."
                     : view === "create"
-                    ? "Create Draft"
-                    : "Update Post"}
+                      ? "Create Draft"
+                      : "Update Post"}
                 </button>
               </div>
             </form>
@@ -458,7 +454,10 @@ function PostRow({
       <div className="flex-1 min-w-0">
         <h3 className="text-white font-medium truncate">{post.Title}</h3>
         <p className="text-white-50 text-sm">
-          {formatDate(post.PublishedAt?.Valid ? post.PublishedAt.Time : post.CreatedAt)} &middot;{" "}
+          {formatDate(
+            post.PublishedAt?.Valid ? post.PublishedAt.Time : post.CreatedAt,
+          )}{" "}
+          &middot;{" "}
           <span className="font-mono text-xs">/talkerinos/{post.Slug}</span>
         </p>
       </div>
