@@ -12,7 +12,7 @@ import (
 	"talkerinos/internal/middleware"
 )
 
-func New(h *handler.Handler) *gin.Engine {
+func New(h *handler.Handler, chat *handler.ChatHandler) *gin.Engine {
 	router := gin.Default()
 
 	allowedOrigins := os.Getenv("ALLOWED_ORIGINS")
@@ -46,6 +46,9 @@ func New(h *handler.Handler) *gin.Engine {
 		v1.POST("/blog", middleware.RequireAPIKey(), h.AddPosts)
 		v1.PUT("/blog/:id", middleware.RequireAPIKey(), h.UpdatePost)
 		v1.DELETE("/blog/:id", middleware.RequireAPIKey(), h.DeletePost)
+
+		// chat - streams AI response
+		v1.POST("/chat", middleware.RequireAPIKey(), chat.Chat)
 	}
 
 	return router
