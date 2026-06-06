@@ -15,4 +15,4 @@ test:
 	uv run pytest
 
 rebuild:
-	uv run gdos rebuild
+	uv run braindump rebuild

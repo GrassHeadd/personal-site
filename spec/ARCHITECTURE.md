@@ -254,7 +254,7 @@ Stage being built first: **the markdown vault foundation** (the contract underne
 - Note file format + capture-event shape: `src/grassdump_os/store/note.py`
 - Disposable derived index (rebuildable from files): `src/grassdump_os/store/index.py`
 - Proof of the core property — delete the index, rebuild from files, identical result:
-  `gdos rebuild` / `tests/test_rebuild.py`
+  `braindump rebuild` / `tests/test_rebuild.py`
 
 Not yet built (have a home, no code): FastAPI app, ingest adapters, ASR, the gardener,
 the output dashboard, Postgres/pgvector swap.

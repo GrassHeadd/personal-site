@@ -1,9 +1,9 @@
-"""`gdos` — the command line for the derived index.
+"""`braindump` — the command line for the derived index.
 
 The foundation's whole claim is testable from here:
-    gdos rebuild      # build the index from the vault
+    braindump rebuild      # build the index from the vault
     rm index.db
-    gdos rebuild      # ...and it comes back identical
+    braindump rebuild      # ...and it comes back identical
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from app.dao import index as index_dao
 from app.database import SessionLocal
 from app.models.index import NoteRow, TaskRow
 
-app = typer.Typer(help="grassdump-os: operate on the vault's derived index.")
+app = typer.Typer(help="braindump: operate on the vault's derived index.")
 
 
 @app.command()

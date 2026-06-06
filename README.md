@@ -1,4 +1,4 @@
-# grassdump-os
+# braindump
 
 A voice-first personal knowledge OS. Capture anything (mostly by voice) with near-zero
 friction, let an LLM triage and organize it into a markdown knowledge base, and get a
@@ -30,7 +30,7 @@ The **markdown vault foundation** — the contract everything else sits on:
 - `vault/` — the vault skeleton + conventions (`vault/README.md`)
 - `app/domain/note.py` — the note file format + the capture-event shape
 - `app/models/index.py`, `app/dao/index.py` — the disposable derived index
-- `gdos rebuild` — proves the property: delete the index, rebuild from files
+- `braindump rebuild` — proves the property: delete the index, rebuild from files
 
 Not built yet (have a home in `app/services/`, no code): ingest adapters, ASR, the
 gardener, the output dashboard, the Postgres/pgvector swap.
@@ -39,9 +39,9 @@ gardener, the output dashboard, the Postgres/pgvector swap.
 
 ```bash
 uv sync
-uv run gdos rebuild        # build the index from ./vault
-uv run gdos notes          # list indexed notes
-uv run gdos tasks          # list open tasks (checkboxes) across the vault
+uv run braindump rebuild        # build the index from ./vault
+uv run braindump notes          # list indexed notes
+uv run braindump tasks          # list open tasks (checkboxes) across the vault
 uv run pytest              # incl. the "index is disposable" test
 ```
 

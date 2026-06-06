@@ -160,7 +160,7 @@ wheels = [
 ]
 
 [[package]]
-name = "grassdump-os"
+name = "braindump"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [

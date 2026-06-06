@@ -1,5 +1,5 @@
 [project]
-name = "grassdump-os"
+name = "braindump"
 version = "0.0.1"
 description = "Voice-first personal knowledge OS. Obsidian vault is the source of truth; everything else is a disposable derived index."
 readme = "README.md"
@@ -26,7 +26,7 @@ reasoning = ["pydantic-ai-slim[anthropic]>=1.0"]  # house LLM framework, matches
 dev = ["pytest>=8.0", "ruff>=0.6", "pyright>=1.1"]
 
 [project.scripts]
-gdos = "app.cli:app"
+braindump = "app.cli:app"
 
 [tool.uv]
 package = true

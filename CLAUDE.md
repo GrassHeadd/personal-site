@@ -1,4 +1,4 @@
-# grassdump-os — Claude instructions
+# braindump — Claude instructions
 
 Voice-first personal knowledge OS. Solo user. Successor to the TS `grassdump` (archived).
 Full design: `spec/ARCHITECTURE.md`.
@@ -6,7 +6,7 @@ Full design: `spec/ARCHITECTURE.md`.
 ## Invariants — do not violate these
 
 1. **The vault is the source of truth. The index is disposable.** Anything in the
-   SQLite/Postgres index must be reconstructable from `vault/` files by `gdos rebuild`.
+   SQLite/Postgres index must be reconstructable from `vault/` files by `braindump rebuild`.
    Never make the index authoritative.
 2. **Write-path discipline.** Ingest only ever *appends* to `vault/inbox/`. The gardener
    is the *only* process that mutates `vault/notes/`. Raw captures are archived to
