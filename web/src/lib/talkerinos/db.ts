@@ -45,7 +45,9 @@ export async function sb(
   init: RequestInit = {},
 ): Promise<Response> {
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  /* prefer the secret (service role) key; fall back to the publishable key,
+     which works while RLS is disabled on the posts table */
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
   if (!url || !key) {
     throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not configured");
   }
