@@ -23,6 +23,7 @@ export async function getDrafts(apiKey: string): Promise<Post[]> {
     headers: { "X-API-Key": apiKey },
     cache: "no-store",
   });
+  if (res.status === 401) throw new Error("unauthorized");
   if (!res.ok) throw new Error("Failed to fetch drafts");
   return res.json();
 }

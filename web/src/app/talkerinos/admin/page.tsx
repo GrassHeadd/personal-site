@@ -54,18 +54,41 @@ export default function TalkerinosAdmin() {
       setDrafts(draftPosts || []);
     } catch (err) {
       console.error("Failed to fetch posts:", err);
-      setError("Failed to load posts. Check your API key.");
+      if (err instanceof Error && err.message === "unauthorized") {
+        // key was rejected: back to the login page, not a broken dashboard
+        handleLogout();
+        setError("That API key was rejected. Log in again.");
+      } else {
+        setError("Failed to load posts.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAuth = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (apiKey.trim()) {
-      localStorage.setItem("talkerinos_api_key", apiKey);
+    const key = apiKey.trim();
+    if (!key) return;
+
+    // verify the key before letting anyone onto the dashboard
+    setLoading(true);
+    setError(null);
+    try {
+      const draftPosts = await getDrafts(key);
+      localStorage.setItem("talkerinos_api_key", key);
+      setApiKey(key);
       setIsAuthed(true);
-      fetchAllPosts(apiKey);
+      setDrafts(draftPosts || []);
+      setPosts((await getPosts()) || []);
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message === "unauthorized"
+          ? "Wrong key. You sure you're me?"
+          : "Couldn't verify the key. Try again.",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -221,6 +244,11 @@ export default function TalkerinosAdmin() {
               Talkerinos Admin
             </h1>
             <form onSubmit={handleAuth} className="space-y-4">
+              {error && (
+                <p className="hand text-amber text-center" role="alert">
+                  {error}
+                </p>
+              )}
               <div>
                 <label className="block text-white-50 text-sm mb-2">
                   API Key
@@ -236,9 +264,10 @@ export default function TalkerinosAdmin() {
               </div>
               <button
                 type="submit"
-                className="w-full px-6 py-3 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors"
+                disabled={loading}
+                className="w-full px-6 py-3 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-60"
               >
-                Login
+                {loading ? "checking..." : "Login"}
               </button>
               <Link
                 href="/talkerinos"
