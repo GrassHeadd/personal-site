@@ -12,7 +12,7 @@
 }
 
 html {
-  background: var(--paper);
+  background: var(--paper-2);
   scroll-behavior: smooth;
 }
 
@@ -114,6 +114,27 @@ h3,
 }
 
 @layer components {
+  /* each section is a sheet of paper laid on the desk, alternating tilt */
+  .sheet {
+    --tilt: 0deg;
+    background: var(--paper);
+    border: 1px solid var(--pencil);
+    border-radius: 4px;
+    box-shadow:
+      2px 3px 0 rgba(51, 48, 42, 0.06),
+      0 10px 24px -18px rgba(51, 48, 42, 0.35);
+    transform: rotate(var(--tilt));
+    @apply px-6 py-8 md:px-10 md:py-10;
+  }
+
+  main .sheet:nth-of-type(odd) {
+    --tilt: 0.5deg;
+  }
+
+  main .sheet:nth-of-type(even) {
+    --tilt: -0.5deg;
+  }
+
   /* section header: handwritten label + dashed rule filling the line */
   .section-head {
     @apply flex items-center gap-4 mb-8;
@@ -171,11 +192,11 @@ h3,
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(14px) rotate(var(--tilt, 0deg));
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) rotate(var(--tilt, 0deg));
   }
 }
 

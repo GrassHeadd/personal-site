@@ -9,7 +9,7 @@ import { expCards } from "@/constants";
 const projects = [
   {
     name: "braindump",
-    blurb: "voice-first personal knowledge OS — my second brain, in progress",
+    blurb: "voice-first personal knowledge OS, my second brain in progress",
     href: null,
     status: "digging the foundation",
   },
@@ -27,7 +27,7 @@ const projects = [
   },
   {
     name: "qol+",
-    blurb: "hand-drawn quality-of-life dashboard — calendar, lists, life admin",
+    blurb: "hand-drawn quality-of-life dashboard: calendar, lists, life admin",
     href: null,
     status: "growing quietly",
   },
@@ -35,7 +35,7 @@ const projects = [
 
 const plots = [
   { emoji: "🌱", name: "notes garden", note: "public pieces of the braindump vault", href: null },
-  { emoji: "📅", name: "calendar", note: "what i'm up to — just sprouted, take a look", href: "/calendar" },
+  { emoji: "📅", name: "calendar", note: "what i'm up to. just sprouted, take a look", href: "/calendar" },
   { emoji: "⚙️", name: "workflows", note: "little automations running my life", href: null },
   { emoji: "📷", name: "photo roll", note: "film & phone shots worth keeping", href: null },
 ];
@@ -47,14 +47,14 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-6 pt-36 md:pt-44">
         {/* hero */}
-        <section className="rise rise-1">
+        <section className="sheet rise rise-1">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             hi, i&apos;m junjie <span className="text-forest">(jj)</span>
             <span className="text-forest">.</span>
           </h1>
           <Squiggle className="w-64 md:w-96 h-3 mt-2" />
           <p className="mt-8 text-lg md:text-xl max-w-xl">
-            I build things that (hopefully) work — full stack and AI, currently
+            I build things that (hopefully) work. Full stack and AI, currently
             at{" "}
             <a
               href="https://didero.ai"
@@ -73,7 +73,7 @@ export default function Home() {
         </section>
 
         {/* projects */}
-        <section className="rise rise-2 mt-20 md:mt-24">
+        <section className="sheet rise rise-2 mt-10 md:mt-14">
           <div className="section-head">
             <h2>growing here</h2>
           </div>
@@ -109,7 +109,7 @@ export default function Home() {
         </section>
 
         {/* experience */}
-        <section className="rise rise-3 mt-20 md:mt-24">
+        <section className="sheet rise rise-3 mt-10 md:mt-14">
           <div className="section-head">
             <h2>work so far</h2>
           </div>
@@ -135,7 +135,7 @@ export default function Home() {
         </section>
 
         {/* coming soon plots */}
-        <section className="rise rise-4 mt-20 md:mt-24">
+        <section className="sheet rise rise-4 mt-10 md:mt-14">
           <div className="section-head">
             <h2>on the way</h2>
           </div>
@@ -171,35 +171,33 @@ export default function Home() {
         </section>
 
         {/* say hi */}
-        <section className="rise rise-5 mt-20 md:mt-24">
-          <div className="sketch-border p-6 md:p-8 -rotate-[0.4deg]">
-            <h2 className="text-xl md:text-2xl font-bold">
-              say hi<span className="text-forest">.</span>
-            </h2>
-            <p className="text-ink-soft mt-2">
-              Find me on{" "}
-              <a
-                href="https://github.com/grassheadd"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ink-link"
-              >
-                github
-              </a>{" "}
-              or{" "}
-              <a
-                href="https://linkedin.com/in/junjiehu1"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ink-link"
-              >
-                linkedin
-              </a>
-              , or drop a note straight into my inbox. I read everything,
-              eventually.
-            </p>
-            <ContactForm />
-          </div>
+        <section className="sheet rise rise-5 mt-10 md:mt-14">
+          <h2 className="text-xl md:text-2xl font-bold">
+            say hi<span className="text-forest">.</span>
+          </h2>
+          <p className="text-ink-soft mt-2">
+            Find me on{" "}
+            <a
+              href="https://github.com/grassheadd"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ink-link"
+            >
+              github
+            </a>{" "}
+            or{" "}
+            <a
+              href="https://linkedin.com/in/junjiehu1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ink-link"
+            >
+              linkedin
+            </a>
+            , or drop a note straight into my inbox. I read everything,
+            eventually.
+          </p>
+          <ContactForm />
         </section>
       </main>
 

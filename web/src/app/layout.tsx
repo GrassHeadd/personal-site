@@ -18,7 +18,7 @@ const atkinson = Atkinson_Hyperlegible({
 export const metadata: Metadata = {
   title: "JJ's Grasshut",
   description:
-    "JJ's corner of the internet — projects, rambles, photos, and a slowly growing second brain.",
+    "JJ's corner of the internet, projects, rambles, photos, and a slowly growing second brain.",
 };
 
 export default function RootLayout({

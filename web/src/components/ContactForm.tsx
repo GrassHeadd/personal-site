@@ -93,7 +93,7 @@ const ContactForm = () => {
         </button>
         {status === "sent" && (
           <p className="hand text-forest" role="status">
-            got it — talk soon!
+            got it, talk soon!
           </p>
         )}
         {status === "error" && (

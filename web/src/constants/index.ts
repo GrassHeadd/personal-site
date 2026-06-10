@@ -10,7 +10,7 @@ const expCards: ExpCard[] = [
   {
     title: "Member of Technical Staff",
     company: "Didero",
-    date: "Aug 2025 — now",
+    date: "Aug 2025 - now",
     responsibilities: [
       "Building AI agents for procurement, shipping product end-to-end.",
       "Enjoying New York City while I'm at it.",
@@ -19,7 +19,7 @@ const expCards: ExpCard[] = [
   {
     title: "AI Engineer Intern",
     company: "AI Singapore",
-    date: "May — Aug 2025",
+    date: "May - Aug 2025",
     responsibilities: [
       "SEA-LION v4 post-training: multi-agent reward pipelines, RLHF (PPO, GRPO, DAPO).",
       "Built a code-judging agent that improved evaluation accuracy by 30%.",
@@ -28,7 +28,7 @@ const expCards: ExpCard[] = [
   {
     title: "Software Engineer Intern",
     company: "SUSS",
-    date: "Jan — May 2025",
+    date: "Jan - May 2025",
     responsibilities: [
       "RAG systems with DSPy and AI scrapers for dynamic sites.",
       "Evaluated AI tools for classroom teaching.",

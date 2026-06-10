@@ -63,7 +63,7 @@ export default function CalendarPage() {
         </h1>
         <Squiggle className="w-44 md:w-64 h-3 mb-4" />
         <p className="text-ink-soft max-w-xl mb-10">
-          What I&apos;m up to. Hand-scribbled for now — auto-synced from the
+          What I&apos;m up to. Hand-scribbled for now, auto-synced from the
           braindump eventually.
         </p>
 
