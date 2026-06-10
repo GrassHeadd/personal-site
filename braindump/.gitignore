@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets
+.env
+
+# The derived index is DISPOSABLE — never commit it. Rebuilt from the vault.
+index.db
+*.sqlite
+*.sqlite3
+
+# The vault is the source of truth, but it lives in your Obsidian/Syncthing
+# folder in real use (see VAULT_PATH). The repo ships only a skeleton + examples.
+# Ignore captured content so dev notes don't get committed:
+/vault/inbox/*
+/vault/raw/*
+/vault/notes/*
+/vault/snapshots/*
+/vault/_changes/*
+!/vault/**/.gitkeep
+# ...but keep the load-bearing structure files and the example note:
+!/vault/notes/example-note.md
