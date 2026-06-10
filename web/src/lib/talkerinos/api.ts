@@ -1,9 +1,9 @@
 import type { Post } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE = "";
 
 export async function getPosts(): Promise<Post[]> {
-  const res = await fetch(`${API_BASE}/v1/blog`, {
+  const res = await fetch(`${API_BASE}/api/blog`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to fetch posts");
@@ -11,7 +11,7 @@ export async function getPosts(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post> {
-  const res = await fetch(`${API_BASE}/v1/blog/slug/${slug}`, {
+  const res = await fetch(`${API_BASE}/api/blog/slug/${slug}`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Post not found");
@@ -19,7 +19,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
 }
 
 export async function getDrafts(apiKey: string): Promise<Post[]> {
-  const res = await fetch(`${API_BASE}/v1/blog/drafts`, {
+  const res = await fetch(`${API_BASE}/api/blog/drafts`, {
     headers: { "X-API-Key": apiKey },
     cache: "no-store",
   });
@@ -31,7 +31,7 @@ export async function createPost(
   apiKey: string,
   data: { title: string; slug: string; content: string },
 ): Promise<Post> {
-  const res = await fetch(`${API_BASE}/v1/blog`, {
+  const res = await fetch(`${API_BASE}/api/blog`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export async function updatePost(
   id: string,
   data: { title: string; slug: string; content: string; published: boolean },
 ): Promise<Post> {
-  const res = await fetch(`${API_BASE}/v1/blog/${id}`, {
+  const res = await fetch(`${API_BASE}/api/blog/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export async function updatePost(
 }
 
 export async function deletePost(apiKey: string, id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/v1/blog/${id}`, {
+  const res = await fetch(`${API_BASE}/api/blog/${id}`, {
     method: "DELETE",
     headers: { "X-API-Key": apiKey },
   });
@@ -69,7 +69,7 @@ export async function deletePost(apiKey: string, id: string): Promise<void> {
 }
 
 export async function getPostById(apiKey: string, id: string): Promise<Post> {
-  const res = await fetch(`${API_BASE}/v1/blog/${id}`, {
+  const res = await fetch(`${API_BASE}/api/blog/${id}`, {
     headers: { "X-API-Key": apiKey },
     cache: "no-store",
   });
@@ -96,7 +96,7 @@ export function chatStream(
 ): () => void {
   const controller = new AbortController();
 
-  fetch(`${API_BASE}/v1/chat`, {
+  fetch(`${API_BASE}/api/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
