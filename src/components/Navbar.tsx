@@ -1,53 +1,48 @@
-'use client';
+"use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 import { navLinks } from "../constants";
 
 const NavBar = () => {
-  // track if the user has scrolled down the page
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    // create an event listener for when the user scrolls
-    const handleScroll = () => {
-      // check if the user has scrolled down at least 10px
-      // if so, set the state to true
-      const isScrolled = window.scrollY > 10;
-      setScrolled(isScrolled);
-    };
-
-    // add the event listener to the window
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
-
-    // cleanup the event listener when the component is unmounted
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className={`navbar ${scrolled ? "scrolled" : "not-scrolled"}`}>
-      <div className="inner">
-        <a href="/" className="text-[#F5F0E8] text-xl md:text-2xl font-semibold hover:text-[#8BA989] transition-colors">
-          Grasshut<span className="text-[#8BA989]">.</span>
-        </a>
+    <header
+      className={`fixed top-0 left-0 w-full z-100 transition-all duration-300 ${
+        scrolled
+          ? "bg-paper/90 backdrop-blur-sm border-b border-pencil"
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
+      <div className="max-w-3xl mx-auto flex items-baseline justify-between px-6 py-4">
+        <Link
+          href="/"
+          className="hand text-xl font-bold text-ink hover:-rotate-2 transition-transform duration-200"
+        >
+          grasshut<span className="text-forest">.</span>
+        </Link>
 
-        <nav className="desktop">
-          <ul>
+        <nav>
+          <ul className="flex items-baseline gap-5 md:gap-7">
             {navLinks.map(({ link, name }) => (
               <li key={name}>
-                <a href={link}>{name}</a>
+                <Link href={link} className="hand text-sm md:text-base quiet-link">
+                  {name}
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
-
-        <a href="#contact" className="contact-btn group">
-          <div className="inner">
-            <span>Contact me</span>
-          </div>
-        </a>
       </div>
     </header>
   );
-}
+};
 
 export default NavBar;

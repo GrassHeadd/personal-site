@@ -58,15 +58,17 @@ export default function PostPage() {
         <Navbar />
         <main className="min-h-screen pt-32 md:pt-40 pb-20">
           <div className="max-w-3xl mx-auto px-5 md:px-10 text-center">
-            <h1 className="text-4xl font-bold text-cream mb-4">Post not found</h1>
-            <p className="text-white-50 mb-8">
+            <h1 className="text-4xl font-bold mb-4">
+              post not found<span className="text-forest">.</span>
+            </h1>
+            <p className="text-ink-soft mb-8">
               The post you&apos;re looking for doesn&apos;t exist or has been removed.
             </p>
             <Link
               href="/talkerinos"
-              className="px-6 py-3 rounded-lg bg-sage text-black-100 font-medium hover:bg-forest transition-colors"
+              className="text-forest underline decoration-wavy decoration-sage underline-offset-4 hover:decoration-forest"
             >
-              Back to Talkerinos
+              ← back to talkerinos
             </Link>
           </div>
         </main>
@@ -83,7 +85,7 @@ export default function PostPage() {
           {/* Back link */}
           <Link
             href="/talkerinos"
-            className="inline-flex items-center gap-2 text-white-50 hover:text-sage transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-ink-soft hover:text-forest transition-colors mb-8"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -103,19 +105,15 @@ export default function PostPage() {
 
           {/* Header */}
           <header className="mb-12">
-            <h1 className="text-3xl md:text-5xl font-bold text-cream mb-4">
-              {post.Title}
-            </h1>
-            <time className="text-white-50">
+            <h1 className="text-3xl md:text-5xl font-bold mb-4">{post.Title}</h1>
+            <time className="text-ink-soft">
               {formatDate(post.PublishedAt?.Valid ? post.PublishedAt.Time : post.CreatedAt)}
             </time>
           </header>
 
           {/* Content */}
-          <div className="prose prose-invert prose-lg max-w-none">
-            <div className="text-white-50 leading-relaxed whitespace-pre-wrap">
-              {post.Content}
-            </div>
+          <div className="text-ink text-lg leading-relaxed whitespace-pre-wrap">
+            {post.Content}
           </div>
         </article>
       </main>

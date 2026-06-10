@@ -1,6 +1,4 @@
-'use client';
-import Link from 'next/link';
-import GlowCard from './GlowCard';
+import Link from "next/link";
 
 interface PostCardProps {
   slug: string;
@@ -10,31 +8,27 @@ interface PostCardProps {
   index: number;
 }
 
-const PostCard = ({ slug, title, content, date, index }: PostCardProps) => {
-  const excerpt = content.length > 150 ? content.slice(0, 150) + '...' : content;
+const PostCard = ({ slug, title, content, date }: PostCardProps) => {
+  const excerpt = content.length > 150 ? content.slice(0, 150) + "..." : content;
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
 
   return (
-    <Link href={`/talkerinos/${slug}`}>
-      <GlowCard identifier={`post-${index}`}>
-        <div className="p-6 md:p-8 cursor-pointer group">
-          <div className="flex items-start justify-between mb-4">
-            <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-sage transition-colors">
-              {title}
-            </h2>
-            <span className="text-sm text-white-50 bg-black-200 px-3 py-1 rounded-full whitespace-nowrap ml-4">
-              {formatDate(date)}
-            </span>
-          </div>
-          <p className="text-white-50 leading-relaxed">
-            {excerpt}
-          </p>
+    <Link href={`/talkerinos/${slug}`} className="block group">
+      <article className="sketch-border-soft p-6 md:p-8 transition-all duration-200 group-hover:-rotate-[0.5deg] group-hover:border-sage">
+        <div className="flex items-baseline justify-between gap-4 mb-3">
+          <h2 className="text-xl md:text-2xl font-bold group-hover:text-forest transition-colors">
+            {title}
+          </h2>
+          <span className="text-sm text-ink-soft whitespace-nowrap">
+            {formatDate(date)}
+          </span>
         </div>
-      </GlowCard>
+        <p className="text-ink-soft leading-relaxed">{excerpt}</p>
+      </article>
     </Link>
   );
 };

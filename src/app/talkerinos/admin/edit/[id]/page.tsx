@@ -212,7 +212,7 @@ export default function EditPost() {
             <div className="flex items-center gap-4">
               <Link
                 href="/talkerinos/admin"
-                className="text-white-50 hover:text-sage transition-colors"
+                className="text-white-50 hover:text-forest transition-colors"
               >
                 &larr; Back
               </Link>
@@ -225,7 +225,7 @@ export default function EditPost() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 rounded-lg bg-sage text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save"}
               </button>
@@ -244,7 +244,7 @@ export default function EditPost() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-sage focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-forest focus:outline-none transition-colors"
                   placeholder="Post title"
                 />
               </div>
@@ -255,7 +255,7 @@ export default function EditPost() {
                   type="text"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white font-mono text-sm focus:border-sage focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white font-mono text-sm focus:border-forest focus:outline-none transition-colors"
                   placeholder="post-url-slug"
                 />
               </div>
@@ -269,7 +269,7 @@ export default function EditPost() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={20}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-sage focus:outline-none transition-colors resize-y"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-forest focus:outline-none transition-colors resize-y"
                   placeholder="Write your post content..."
                 />
               </div>
@@ -289,7 +289,7 @@ export default function EditPost() {
                     key={i}
                     className={`p-3 rounded-lg ${
                       msg.role === "user"
-                        ? "bg-sage/20 ml-8"
+                        ? "bg-forest/20 ml-8"
                         : "bg-black-300 mr-8"
                     }`}
                   >
@@ -316,7 +316,7 @@ export default function EditPost() {
                   <div className="flex gap-2">
                     <button
                       onClick={handleAcceptSuggestion}
-                      className="flex-1 px-3 py-2 rounded bg-sage text-black-100 text-sm font-medium hover:bg-forest transition-colors"
+                      className="flex-1 px-3 py-2 rounded bg-forest text-black-100 text-sm font-medium hover:bg-forest transition-colors"
                     >
                       Accept
                     </button>
@@ -333,7 +333,7 @@ export default function EditPost() {
               {/* Selected Text Indicator */}
               {selectedText && (
                 <div className="px-4 py-2 border-t border-black-300">
-                  <p className="text-xs text-sage">
+                  <p className="text-xs text-forest">
                     Selected: &quot;{selectedText.slice(0, 40)}
                     {selectedText.length > 40 ? "..." : ""}&quot;
                   </p>
@@ -356,14 +356,14 @@ export default function EditPost() {
                         : "Select text first..."
                     }
                     disabled={isStreaming}
-                    className="flex-1 px-3 py-2 rounded-lg bg-black-300 border border-black-300 text-white text-sm focus:border-sage focus:outline-none transition-colors disabled:opacity-50"
+                    className="flex-1 px-3 py-2 rounded-lg bg-black-300 border border-black-300 text-white text-sm focus:border-forest focus:outline-none transition-colors disabled:opacity-50"
                   />
                   <button
                     onClick={handleSendChat}
                     disabled={
                       isStreaming || (!chatInput.trim() && !selectedText)
                     }
-                    className="px-4 py-2 rounded-lg bg-sage text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-50"
+                    className="px-4 py-2 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-50"
                   >
                     {isStreaming ? "..." : "Send"}
                   </button>

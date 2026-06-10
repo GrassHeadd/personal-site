@@ -1,43 +1,31 @@
-'use client';
-import { useEffect } from 'react';
-import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/sections/Footer';
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/sections/Footer";
 
 export default function Projects() {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
-
   return (
     <>
       <Navbar />
-      <main className="min-h-screen flex flex-col items-center justify-center px-5">
-        <div className="text-center max-w-2xl">
-          {/* Construction tape style */}
-          <div className="mb-8 py-3 px-6 bg-[#F4A259] text-[#0C0A09] font-bold text-sm uppercase tracking-widest transform -rotate-2">
-            Work in Progress
+      <main className="min-h-screen flex flex-col items-center justify-center px-6">
+        <div className="text-center max-w-xl">
+          <div className="sketch-dashed inline-block py-2 px-5 mb-8 -rotate-2 text-sm font-semibold uppercase tracking-widest text-ink-soft">
+            🚧 work in progress
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-[#F5F0E8]">
-            App Hub
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            app hub<span className="text-forest">.</span>
           </h1>
 
-          <p className="text-[#a8a29e] text-lg md:text-xl mb-8">
+          <p className="text-ink-soft text-lg mb-10">
             Something&apos;s cooking. Check back soon.
           </p>
 
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/"
-              className="px-6 py-3 bg-[#8BA989] hover:bg-[#4C7A55] text-[#0C0A09] rounded-lg transition-colors font-medium"
-            >
-              Back Home
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="text-forest underline decoration-wavy decoration-sage underline-offset-4 hover:decoration-forest"
+          >
+            ← back to the hut
+          </Link>
         </div>
       </main>
       <Footer />

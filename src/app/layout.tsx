@@ -1,9 +1,24 @@
 import type { Metadata } from "next";
+import { Shantell_Sans, Atkinson_Hyperlegible } from "next/font/google";
 import "./globals.css";
 
+const shantell = Shantell_Sans({
+  subsets: ["latin"],
+  variable: "--font-shantell",
+  weight: "variable",
+});
+
+const atkinson = Atkinson_Hyperlegible({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
-  title: "JJ | Full Stack Developer",
-  description: "Full Stack Developer and AI Engineer specializing in React, Next.js, and machine learning.",
+  title: "JJ's Grasshut",
+  description:
+    "JJ's corner of the internet — projects, rambles, photos, and a slowly growing second brain.",
 };
 
 export default function RootLayout({
@@ -12,10 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        {children}
-      </body>
+    <html lang="en" className={`${shantell.variable} ${atkinson.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

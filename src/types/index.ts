@@ -9,14 +9,3 @@ export interface ExpCard {
   date: string;
   responsibilities: string[];
 }
-
-export interface ButtonProps {
-  text: string;
-  className?: string;
-  id?: string;
-}
-
-export interface TitleHeaderProps {
-  title: string;
-  sub: string;
-}

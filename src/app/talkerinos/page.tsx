@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/sections/Footer";
 import PostCard from "@/components/PostCard";
+import Squiggle from "@/components/Squiggle";
 import { getPosts, type Post } from "@/lib/talkerinos";
 
 export default function Talkerinos() {
@@ -32,18 +33,19 @@ export default function Talkerinos() {
       <main className="min-h-screen pt-32 md:pt-40 pb-20">
         <div className="max-w-4xl mx-auto px-5 md:px-10">
           {/* Header */}
-          <div className="flex items-start justify-between mb-16">
+          <div className="flex items-start justify-between gap-4 mb-16">
             <div>
-              <h1 className="text-4xl md:text-6xl font-bold text-cream mb-4">
-                Talkerinos
+              <h1 className="text-4xl md:text-6xl font-bold mb-2">
+                talkerinos<span className="text-forest">.</span>
               </h1>
-              <p className="text-white-50 text-lg md:text-xl max-w-xl">
+              <Squiggle className="w-48 md:w-72 h-3 mb-4" />
+              <p className="text-ink-soft text-lg md:text-xl max-w-xl">
                 Thoughts, rambles, and the occasional tutorial.
               </p>
             </div>
             <Link
               href="/talkerinos/admin"
-              className="px-4 py-2 text-sm rounded-lg border border-sage text-sage font-medium hover:bg-sage hover:text-black-100 transition-all duration-300 whitespace-nowrap"
+              className="sketch-dashed px-4 py-2 text-sm text-ink-soft whitespace-nowrap hover:text-forest hover:-rotate-2 transition-all duration-200"
             >
               if you are me
             </Link>

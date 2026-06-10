@@ -229,20 +229,20 @@ export default function TalkerinosAdmin() {
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-sage focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-forest focus:outline-none transition-colors"
                   placeholder="Enter your API key"
                   autoFocus
                 />
               </div>
               <button
                 type="submit"
-                className="w-full px-6 py-3 rounded-lg bg-sage text-black-100 font-medium hover:bg-forest transition-colors"
+                className="w-full px-6 py-3 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors"
               >
                 Login
               </button>
               <Link
                 href="/talkerinos"
-                className="block text-center text-white-50 hover:text-sage transition-colors"
+                className="block text-center text-white-50 hover:text-forest transition-colors"
               >
                 Back to Talkerinos
               </Link>
@@ -274,7 +274,7 @@ export default function TalkerinosAdmin() {
                       resetForm();
                       setView("create");
                     }}
-                    className="px-4 py-2 rounded-lg bg-sage text-black-100 font-medium hover:bg-forest transition-colors"
+                    className="px-4 py-2 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors"
                   >
                     New Post
                   </button>
@@ -291,7 +291,7 @@ export default function TalkerinosAdmin() {
                     resetForm();
                     setView("list");
                   }}
-                  className="px-4 py-2 rounded-lg border border-white-50 text-white-50 hover:border-sage hover:text-sage transition-colors"
+                  className="px-4 py-2 rounded-lg border border-white-50 text-white-50 hover:border-forest hover:text-forest transition-colors"
                 >
                   Cancel
                 </button>
@@ -306,7 +306,7 @@ export default function TalkerinosAdmin() {
             </div>
           )}
           {success && (
-            <div className="mb-6 px-4 py-3 rounded-lg bg-sage/10 border border-sage/50 text-sage">
+            <div className="mb-6 px-4 py-3 rounded-lg bg-forest/10 border border-forest/50 text-forest">
               {success}
             </div>
           )}
@@ -343,7 +343,7 @@ export default function TalkerinosAdmin() {
 
                   {/* Published */}
                   <div>
-                    <h2 className="text-xl font-semibold text-sage mb-4">
+                    <h2 className="text-xl font-semibold text-forest mb-4">
                       Published ({posts.length})
                     </h2>
                     {posts.length === 0 ? (
@@ -384,7 +384,7 @@ export default function TalkerinosAdmin() {
                   type="text"
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-sage focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-forest focus:outline-none transition-colors"
                   placeholder="Post title"
                   autoFocus
                 />
@@ -396,7 +396,7 @@ export default function TalkerinosAdmin() {
                   type="text"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-sage focus:outline-none transition-colors font-mono text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-forest focus:outline-none transition-colors font-mono text-sm"
                   placeholder="post-url-slug"
                 />
               </div>
@@ -409,7 +409,7 @@ export default function TalkerinosAdmin() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={15}
-                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-sage focus:outline-none transition-colors resize-y"
+                  className="w-full px-4 py-3 rounded-lg bg-black-200 border border-black-300 text-white focus:border-forest focus:outline-none transition-colors resize-y"
                   placeholder="Write your post content..."
                 />
               </div>
@@ -418,7 +418,7 @@ export default function TalkerinosAdmin() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-3 rounded-lg bg-sage text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-50"
+                  className="px-6 py-3 rounded-lg bg-forest text-black-100 font-medium hover:bg-forest transition-colors disabled:opacity-50"
                 >
                   {loading
                     ? "Saving..."
@@ -464,7 +464,7 @@ function PostRow({
       <div className="flex items-center gap-2 ml-4">
         <button
           onClick={onEdit}
-          className="px-3 py-1.5 text-sm rounded border border-white-50 text-white-50 hover:border-sage hover:text-sage transition-colors"
+          className="px-3 py-1.5 text-sm rounded border border-white-50 text-white-50 hover:border-forest hover:text-forest transition-colors"
         >
           Edit
         </button>
@@ -473,7 +473,7 @@ function PostRow({
           className={`px-3 py-1.5 text-sm rounded border transition-colors ${
             post.Published
               ? "border-gold text-amber hover:bg-gold/10"
-              : "border-sage text-sage hover:bg-sage/10"
+              : "border-forest text-forest hover:bg-forest/10"
           }`}
         >
           {post.Published ? "Unpublish" : "Publish"}
