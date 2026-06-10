@@ -1,9 +1,7 @@
-"""Engine + session for the derived index.
+"""Engine + session for the single Postgres store (SQLite locally).
 
-Sync SQLAlchemy on purpose: rebuilding the index is a batch operation that walks the
-filesystem (sync I/O), and SQLite is the local default. When the FastAPI app and the
-Postgres swap arrive, that path can move to async (the house style) — the index is
-disposable, so none of this is load-bearing.
+Sync SQLAlchemy for now — simple and enough for the CLI and the gardener job. When the
+FastAPI app arrives this can move to async (the house style); the models are unchanged.
 """
 
 from __future__ import annotations
@@ -13,7 +11,7 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from app.config import settings
 
-engine = create_engine(settings.index_url, future=True)
+engine = create_engine(settings.database_url, future=True)
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False, future=True)
 
 
