@@ -12,7 +12,7 @@
 }
 
 html {
-  background: var(--paper-2);
+  background: var(--paper);
   scroll-behavior: smooth;
 }
 
@@ -114,25 +114,22 @@ h3,
 }
 
 @layer components {
-  /* each section is a sheet of paper laid on the desk, alternating tilt */
-  .sheet {
-    --tilt: 0deg;
-    background: var(--paper);
-    border: 1px solid var(--pencil);
-    border-radius: 4px;
-    box-shadow:
-      2px 3px 0 rgba(51, 48, 42, 0.06),
-      0 10px 24px -18px rgba(51, 48, 42, 0.35);
-    transform: rotate(var(--tilt));
-    @apply px-6 py-8 md:px-10 md:py-10;
+  /* small note-card: tilted like a card laid on the desk, straightens on hover */
+  .note-card {
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
 
-  main .sheet:nth-of-type(odd) {
-    --tilt: 0.5deg;
+  .note-card:nth-child(odd) {
+    --tilt: -0.7deg;
   }
 
-  main .sheet:nth-of-type(even) {
-    --tilt: -0.5deg;
+  .note-card:nth-child(even) {
+    --tilt: 0.7deg;
+  }
+
+  .note-card:hover {
+    transform: rotate(0deg);
   }
 
   /* section header: handwritten label + dashed rule filling the line */

@@ -47,7 +47,7 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-6 pt-36 md:pt-44">
         {/* hero */}
-        <section className="sheet rise rise-1">
+        <section className="rise rise-1">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             hi, i&apos;m junjie <span className="text-forest">(jj)</span>
             <span className="text-forest">.</span>
@@ -73,7 +73,7 @@ export default function Home() {
         </section>
 
         {/* projects */}
-        <section className="sheet rise rise-2 mt-10 md:mt-14">
+        <section className="rise rise-2 mt-20 md:mt-24">
           <div className="section-head">
             <h2>growing here</h2>
           </div>
@@ -109,7 +109,7 @@ export default function Home() {
         </section>
 
         {/* experience */}
-        <section className="sheet rise rise-3 mt-10 md:mt-14">
+        <section className="rise rise-3 mt-20 md:mt-24">
           <div className="section-head">
             <h2>work so far</h2>
           </div>
@@ -135,7 +135,7 @@ export default function Home() {
         </section>
 
         {/* coming soon plots */}
-        <section className="sheet rise rise-4 mt-10 md:mt-14">
+        <section className="rise rise-4 mt-20 md:mt-24">
           <div className="section-head">
             <h2>on the way</h2>
           </div>
@@ -157,12 +157,12 @@ export default function Home() {
                 <Link
                   key={plot.name}
                   href={plot.href}
-                  className="sketch-border-soft p-5 hover:border-forest hover:-rotate-[0.5deg] transition-all duration-200"
+                  className="note-card sketch-border-soft p-5 hover:border-forest"
                 >
                   {inner}
                 </Link>
               ) : (
-                <div key={plot.name} className="sketch-dashed p-5">
+                <div key={plot.name} className="note-card sketch-dashed p-5">
                   {inner}
                 </div>
               );
@@ -171,7 +171,8 @@ export default function Home() {
         </section>
 
         {/* say hi */}
-        <section className="sheet rise rise-5 mt-10 md:mt-14">
+        <section className="rise rise-5 mt-20 md:mt-24">
+          <div className="sketch-border p-6 md:p-8 -rotate-[0.4deg]">
           <h2 className="text-xl md:text-2xl font-bold">
             say hi<span className="text-forest">.</span>
           </h2>
@@ -198,6 +199,7 @@ export default function Home() {
             eventually.
           </p>
           <ContactForm />
+          </div>
         </section>
       </main>
 
