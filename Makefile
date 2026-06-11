@@ -15,5 +15,8 @@ build: ## production build of the site
 lint: ## lint the site
 	cd web && npm run lint
 
+db-push: ## apply src/db/schema.ts to Supabase (needs DATABASE_URL in web/.env.local)
+	cd web && npx drizzle-kit push
+
 brain: ## braindump shortcuts, e.g. `make brain cmd=lint`
 	cd braindump && make $(or $(cmd),help)

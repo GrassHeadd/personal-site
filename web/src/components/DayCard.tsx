@@ -156,6 +156,12 @@ const DayCard = ({ dateKey, events, adminKey, onClose, onChanged }: DayCardProps
           </ul>
         )}
 
+        {!adminKey && (
+          <p className="hand text-xs text-ink-soft/70 mt-6 pt-4 border-t border-dashed border-pencil">
+            jj scribbles in here after logging into the talkerinos admin.
+          </p>
+        )}
+
         {adminKey && (
           <form onSubmit={handleSubmit} className="mt-6 pt-4 border-t border-dashed border-pencil flex flex-col gap-2.5">
             <p className="hand text-sm font-bold text-ink-soft">
