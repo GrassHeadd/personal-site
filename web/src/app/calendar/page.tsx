@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import Navbar from "@/components/Navbar";
 import Squiggle from "@/components/Squiggle";
+import DayCard from "@/components/DayCard";
 import Footer from "@/sections/Footer";
-import { calEvents, type CalEvent } from "@/constants/events";
+import { getEvents, type CalEvent } from "@/lib/calendar/api";
 
 const MONTHS = [
   "january", "february", "march", "april", "may", "june",
@@ -13,46 +14,115 @@ const MONTHS = [
 
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
-const toKey = (year: number, month: number, day: number) =>
-  `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+const ymd = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-const eventsByDate = calEvents.reduce<Record<string, CalEvent[]>>((acc, ev) => {
-  (acc[ev.date] ??= []).push(ev);
-  return acc;
-}, {});
+const startOfWeek = (d: Date) => {
+  const out = new Date(d);
+  out.setDate(d.getDate() - d.getDay());
+  return out;
+};
+
+const addDays = (d: Date, n: number) => {
+  const out = new Date(d);
+  out.setDate(d.getDate() + n);
+  return out;
+};
+
+type View = "month" | "week";
 
 export default function CalendarPage() {
-  // render the grid only after mount so the server/client clock can't disagree
+  // render only after mount so the server/client clock can't disagree
   const [today, setToday] = useState<Date | null>(null);
-  const [view, setView] = useState({ year: 2026, month: 0 });
+  const [view, setView] = useState<View>("month");
+  const [cursor, setCursor] = useState<Date>(new Date(2026, 0, 1));
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [loadError, setLoadError] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [adminKey, setAdminKey] = useState<string | null>(null);
 
   useEffect(() => {
     const now = new Date();
     setToday(now);
-    setView({ year: now.getFullYear(), month: now.getMonth() });
+    setCursor(now);
+    setAdminKey(localStorage.getItem("talkerinos_api_key"));
   }, []);
 
-  const shiftMonth = (delta: number) => {
-    setView(({ year, month }) => {
-      const d = new Date(year, month + delta, 1);
-      return { year: d.getFullYear(), month: d.getMonth() };
-    });
+  /* visible range */
+  const range = useMemo(() => {
+    if (view === "week") {
+      const start = startOfWeek(cursor);
+      return { from: ymd(start), to: ymd(addDays(start, 6)) };
+    }
+    const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+    const last = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+    return { from: ymd(first), to: ymd(last) };
+  }, [cursor, view]);
+
+  const refetch = useCallback(() => {
+    if (!today) return;
+    getEvents(range.from, range.to)
+      .then((evs) => {
+        setEvents(evs);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
+  }, [today, range.from, range.to]);
+
+  useEffect(refetch, [refetch]);
+
+  const byDate = useMemo(() => {
+    const map: Record<string, CalEvent[]> = {};
+    for (const ev of events) (map[ev.date] ??= []).push(ev);
+    return map;
+  }, [events]);
+
+  const shift = (dir: 1 | -1) => {
+    setCursor((c) =>
+      view === "week"
+        ? addDays(c, 7 * dir)
+        : new Date(c.getFullYear(), c.getMonth() + dir, 1),
+    );
   };
 
-  const firstWeekday = new Date(view.year, view.month, 1).getDay();
-  const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
-  const cells: (number | null)[] = [
-    ...Array.from({ length: firstWeekday }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-  // pad to complete weeks so trailing empty cells still draw their borders
-  while (cells.length % 7 !== 0) cells.push(null);
+  const isToday = (key: string) => !!today && key === ymd(today);
 
-  const isToday = (day: number) =>
-    !!today &&
-    today.getFullYear() === view.year &&
-    today.getMonth() === view.month &&
-    today.getDate() === day;
+  /* cells for month view: leading/trailing nulls pad to complete weeks */
+  const monthCells = useMemo(() => {
+    const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+    const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+    const cells: (string | null)[] = [
+      ...Array.from({ length: first.getDay() }, () => null),
+      ...Array.from({ length: daysInMonth }, (_, i) =>
+        ymd(new Date(cursor.getFullYear(), cursor.getMonth(), i + 1)),
+      ),
+    ];
+    while (cells.length % 7 !== 0) cells.push(null);
+    return cells;
+  }, [cursor]);
+
+  const weekDays = useMemo(() => {
+    const start = startOfWeek(cursor);
+    return Array.from({ length: 7 }, (_, i) => ymd(addDays(start, i)));
+  }, [cursor]);
+
+  const heading =
+    view === "week"
+      ? `week of ${MONTHS[startOfWeek(cursor).getMonth()].slice(0, 3)} ${startOfWeek(cursor).getDate()}`
+      : MONTHS[cursor.getMonth()];
+
+  const chip = (ev: CalEvent) => (
+    <span
+      key={ev.id}
+      className={`hand text-xs leading-tight px-1.5 py-0.5 rounded-md text-paper truncate ${
+        ev.color === "amber" ? "bg-amber" : "bg-forest"
+      }`}
+    >
+      {ev.title}
+    </span>
+  );
+
+  const dayNumber = (key: string) => Number(key.slice(8));
 
   return (
     <>
@@ -63,97 +133,152 @@ export default function CalendarPage() {
         </h1>
         <Squiggle className="w-44 md:w-64 h-3 mb-4" />
         <p className="text-ink-soft max-w-xl mb-10">
-          What I&apos;m up to. Hand-scribbled for now, auto-synced from the
-          braindump eventually.
+          What I&apos;m up to. Click a day to peek
+          {adminKey ? ", or to scribble something in" : ""}.
         </p>
 
-        {/* month switcher */}
-        <div className="flex items-baseline justify-between mb-6">
-          <button
-            onClick={() => shiftMonth(-1)}
-            className="hand quiet-link text-lg cursor-pointer"
-            aria-label="previous month"
-          >
+        {/* controls */}
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-6">
+          <button onClick={() => shift(-1)} className="hand quiet-link text-lg cursor-pointer" aria-label="previous">
             ← prev
           </button>
-          <h2 className="text-2xl md:text-3xl font-bold">
-            {MONTHS[view.month]}{" "}
-            <span className="text-forest">{view.year}</span>
+          <h2 className="text-2xl md:text-3xl font-bold flex-1 text-center">
+            {heading} <span className="text-forest">{cursor.getFullYear()}</span>
           </h2>
-          <button
-            onClick={() => shiftMonth(1)}
-            className="hand quiet-link text-lg cursor-pointer"
-            aria-label="next month"
-          >
+          <button onClick={() => shift(1)} className="hand quiet-link text-lg cursor-pointer" aria-label="next">
             next →
           </button>
+          <span className="w-full sm:w-auto flex items-baseline justify-center gap-3 sm:ml-4">
+            {(["month", "week"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`hand text-sm cursor-pointer ${
+                  view === v
+                    ? "text-forest font-bold underline decoration-wavy underline-offset-4"
+                    : "quiet-link"
+                }`}
+              >
+                {v}
+              </button>
+            ))}
+            <button
+              onClick={() => today && setCursor(today)}
+              className="hand text-sm quiet-link cursor-pointer"
+            >
+              today
+            </button>
+          </span>
         </div>
+
+        {loadError && (
+          <p className="hand text-amber text-sm mb-4" role="alert">
+            couldn&apos;t load events, the page is showing an empty calendar.
+          </p>
+        )}
 
         {/* grid */}
         <div className="sketch-border-soft overflow-hidden bg-paper">
           <div className="grid grid-cols-7 border-b border-dashed border-pencil">
             {DAYS.map((d) => (
-              <div
-                key={d}
-                className="hand text-center text-sm font-bold text-ink-soft py-2"
-              >
+              <div key={d} className="hand text-center text-sm font-bold text-ink-soft py-2">
                 {d}
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-7">
-            {today &&
-              cells.map((day, i) => {
-                const key = day ? toKey(view.year, view.month, day) : `empty-${i}`;
-                const events = day ? (eventsByDate[key] ?? []) : [];
-                return (
-                  <div
-                    key={key}
-                    className={`min-h-20 md:min-h-24 p-1.5 md:p-2 ${
-                      i % 7 !== 0 ? "border-l" : ""
-                    } ${i >= 7 ? "border-t" : ""} border-dashed border-pencil`}
-                  >
-                    {day && (
-                      <>
-                        <span
-                          className={`inline-flex items-center justify-center size-7 text-sm ${
-                            isToday(day)
-                              ? "sketch-border !border-forest text-forest font-bold"
-                              : "text-ink-soft"
-                          }`}
-                        >
-                          {day}
-                        </span>
-                        <div className="flex flex-col gap-1 mt-1">
-                          {events.map((ev) => (
-                            <span
-                              key={ev.title}
-                              className={`hand text-xs leading-tight px-1.5 py-0.5 rounded-md text-paper ${
-                                ev.color === "amber" ? "bg-amber" : "bg-forest"
-                              }`}
-                            >
-                              {ev.title}
-                            </span>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-          {!today && (
+
+          {!today ? (
             <p className="hand text-center text-ink-soft py-16">
               flipping to today&apos;s page...
             </p>
+          ) : view === "month" ? (
+            <div className="grid grid-cols-7">
+              {monthCells.map((key, i) => (
+                <div
+                  key={key ?? `empty-${i}`}
+                  className={`min-h-20 md:min-h-24 p-1.5 md:p-2 ${
+                    i % 7 !== 0 ? "border-l" : ""
+                  } ${i >= 7 ? "border-t" : ""} border-dashed border-pencil ${
+                    key ? "cursor-pointer hover:bg-paper-2 transition-colors" : ""
+                  }`}
+                  onClick={() => key && setSelectedDay(key)}
+                >
+                  {key && (
+                    <>
+                      <span
+                        className={`inline-flex items-center justify-center size-7 text-sm ${
+                          isToday(key)
+                            ? "sketch-border !border-forest text-forest font-bold"
+                            : "text-ink-soft"
+                        }`}
+                      >
+                        {dayNumber(key)}
+                      </span>
+                      <div className="flex flex-col gap-1 mt-1">
+                        {(byDate[key] ?? []).slice(0, 3).map(chip)}
+                        {(byDate[key]?.length ?? 0) > 3 && (
+                          <span className="hand text-xs text-ink-soft">
+                            +{byDate[key].length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-7">
+              {weekDays.map((key, i) => (
+                <div
+                  key={key}
+                  className={`min-h-48 md:min-h-64 p-1.5 md:p-2 ${
+                    i !== 0 ? "border-l" : ""
+                  } border-dashed border-pencil cursor-pointer hover:bg-paper-2 transition-colors`}
+                  onClick={() => setSelectedDay(key)}
+                >
+                  <span
+                    className={`inline-flex items-center justify-center size-7 text-sm ${
+                      isToday(key)
+                        ? "sketch-border !border-forest text-forest font-bold"
+                        : "text-ink-soft"
+                    }`}
+                  >
+                    {dayNumber(key)}
+                  </span>
+                  <div className="flex flex-col gap-1.5 mt-2">
+                    {(byDate[key] ?? []).map((ev) => (
+                      <div key={ev.id} className="flex flex-col">
+                        {chip(ev)}
+                        {ev.note && (
+                          <span className="text-ink-soft text-xs leading-snug mt-0.5 line-clamp-2">
+                            {ev.note}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
         <p className="hand text-sm text-ink-soft mt-4 -rotate-[0.3deg]">
-          ✏️ events live in <code className="text-forest">constants/events.ts</code>{" "}
-          until the workflows plot gets planted.
+          ✏️ synced from the braindump, eventually. scribbled by hand for now.
         </p>
       </main>
+
+      {selectedDay && (
+        <DayCard
+          dateKey={selectedDay}
+          events={byDate[selectedDay] ?? []}
+          adminKey={adminKey}
+          onClose={() => setSelectedDay(null)}
+          onChanged={refetch}
+        />
+      )}
+
       <Footer />
     </>
   );
