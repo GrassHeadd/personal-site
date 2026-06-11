@@ -153,7 +153,7 @@ export default function CalendarPage() {
               <button
                 key={v}
                 onClick={() => setView(v)}
-                className={`hand text-sm cursor-pointer ${
+                className={`hand text-sm cursor-pointer focus:outline-none focus-visible:underline focus-visible:decoration-wavy ${
                   view === v
                     ? "text-forest font-bold underline decoration-wavy underline-offset-4"
                     : "quiet-link"
