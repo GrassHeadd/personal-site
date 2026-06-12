@@ -123,12 +123,25 @@ describe("DELETE /api/todos/[id]", () => {
     expect(sb).not.toHaveBeenCalled();
   });
 
-  it("deletes and returns 204", async () => {
+  it("soft-deletes the todo and its linked events, returns 204", async () => {
     sb.mockResolvedValue(new Response(null, { status: 204 }));
 
     const res = await del(ID);
 
-    expect(sb).toHaveBeenCalledWith(`todos?id=eq.${ID}`, { method: "DELETE" });
+    expect(sb).toHaveBeenCalledWith(
+      `todos?id=eq.${ID}`,
+      expect.objectContaining({
+        method: "PATCH",
+        body: expect.stringContaining("deleted_at"),
+      }),
+    );
+    expect(sb).toHaveBeenCalledWith(
+      `events?todo_id=eq.${ID}&deleted_at=is.null`,
+      expect.objectContaining({
+        method: "PATCH",
+        body: expect.stringContaining("deleted_at"),
+      }),
+    );
     expect(res.status).toBe(204);
   });
 

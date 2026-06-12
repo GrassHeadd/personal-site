@@ -37,9 +37,9 @@ export async function listEvents(
        singles overlapping the window, plus every series started by `to` */
     const [singles, series] = await Promise.all([
       sb(
-        `events?recur=is.null&date=lte.${to}&or=(end_date.gte.${from},date.gte.${from})&order=date.asc`,
+        `events?deleted_at=is.null&recur=is.null&date=lte.${to}&or=(end_date.gte.${from},date.gte.${from})&order=date.asc`,
       ),
-      sb(`events?recur=not.is.null&date=lte.${to}&order=date.asc`),
+      sb(`events?deleted_at=is.null&recur=not.is.null&date=lte.${to}&order=date.asc`),
     ]);
     if (!singles.ok) throw new Error(await singles.text());
     if (!series.ok) throw new Error(await series.text());
@@ -51,7 +51,7 @@ export async function listEvents(
   }
 
   /* all-day events first, then timed ones in clock order */
-  let q = "events?order=date.asc,start_time.asc.nullsfirst,created_at.asc";
+  let q = "events?deleted_at=is.null&order=date.asc,start_time.asc.nullsfirst,created_at.asc";
   if (from) q += `&date=gte.${from}`;
   if (to) q += `&date=lte.${to}`;
   const res = await sb(q);
@@ -83,7 +83,12 @@ export async function replaceEvent(
   return rows[0] ?? null;
 }
 
+/* soft delete: stamp the row instead of dropping it */
 export async function removeEvent(id: string): Promise<void> {
-  const res = await sb(`events?id=eq.${id}`, { method: "DELETE" });
+  const now = new Date().toISOString();
+  const res = await sb(`events?id=eq.${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ deleted_at: now, updated_at: now }),
+  });
   if (!res.ok) throw new Error(await res.text());
 }

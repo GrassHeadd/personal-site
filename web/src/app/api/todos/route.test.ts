@@ -37,7 +37,9 @@ describe("GET /api/todos", () => {
 
     const res = await GET();
 
-    expect(sb).toHaveBeenCalledWith("todos?order=done.asc,created_at.asc");
+    expect(sb).toHaveBeenCalledWith(
+      "todos?deleted_at=is.null&order=done.asc,created_at.asc",
+    );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual(rows);
   });

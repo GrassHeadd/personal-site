@@ -9,7 +9,7 @@ import type { Todo } from "./api";
 
 export async function listTodos(): Promise<Todo[]> {
   /* open items in writing order, crossed-off ones grouped after */
-  const res = await sb("todos?order=done.asc,created_at.asc");
+  const res = await sb("todos?deleted_at=is.null&order=done.asc,created_at.asc");
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -45,7 +45,18 @@ export async function patchTodo(
   return rows[0] ?? null;
 }
 
+/* soft delete: stamp the todo, and its scheduled events go with it
+   (the soft version of the FK cascade) */
 export async function removeTodo(id: string): Promise<void> {
-  const res = await sb(`todos?id=eq.${id}`, { method: "DELETE" });
+  const now = new Date().toISOString();
+  const res = await sb(`todos?id=eq.${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ deleted_at: now, updated_at: now }),
+  });
   if (!res.ok) throw new Error(await res.text());
+  const ev = await sb(`events?todo_id=eq.${id}&deleted_at=is.null`, {
+    method: "PATCH",
+    body: JSON.stringify({ deleted_at: now, updated_at: now }),
+  });
+  if (!ev.ok) throw new Error(await ev.text());
 }

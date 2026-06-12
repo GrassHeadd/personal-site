@@ -26,7 +26,7 @@ const dt = (date: string, time: string) =>
   `${date.replace(/-/g, "")}T${time.replace(/:/g, "").padEnd(6, "0")}`;
 
 export async function GET() {
-  const res = await sb("events?order=date.asc");
+  const res = await sb("events?deleted_at=is.null&order=date.asc");
   if (!res.ok) {
     return new Response("calendar feed unavailable", { status: 500 });
   }
