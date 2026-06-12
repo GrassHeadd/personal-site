@@ -18,6 +18,8 @@ export default function TodoList({
   const [todos, setTodos] = useState<Todo[]>(initialTodos ?? []);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState("");
   const loadError = initialTodos === null;
 
   const open = useMemo(() => todos.filter((t) => !t.done), [todos]);
@@ -64,6 +66,23 @@ export default function TodoList({
   const remove = (todo: Todo) => {
     setTodos((ts) => ts.filter((t) => t.id !== todo.id));
     deleteTodo(todo.id).catch(() => setTodos((ts) => [...ts, todo]));
+  };
+
+  const startEdit = (todo: Todo) => {
+    if (!canEdit) return;
+    setEditingId(todo.id);
+    setEditDraft(todo.title);
+  };
+
+  /* optimistic rename: blank or unchanged input just closes the editor */
+  const commitEdit = (todo: Todo) => {
+    const title = editDraft.trim();
+    setEditingId(null);
+    if (!title || title === todo.title) return;
+    setTodos((ts) => ts.map((t) => (t.id === todo.id ? { ...t, title } : t)));
+    updateTodo(todo.id, { title }).catch(() => {
+      setTodos((ts) => ts.map((t) => (t.id === todo.id ? todo : t)));
+    });
   };
 
   const checkbox = (todo: Todo) => (
@@ -113,7 +132,34 @@ export default function TodoList({
                 className="group flex items-start gap-3 py-2.5 border-b border-dashed border-pencil last:border-b-0"
               >
                 {checkbox(todo)}
-                <span className="hand text-lg leading-snug flex-1">{todo.title}</span>
+                {editingId === todo.id ? (
+                  <input
+                    autoFocus
+                    value={editDraft}
+                    onChange={(e) => setEditDraft(e.target.value)}
+                    onBlur={() => commitEdit(todo)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") e.currentTarget.blur();
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                    aria-label={`edit "${todo.title}"`}
+                    className="hand text-lg leading-snug flex-1 bg-transparent border-b border-dashed border-forest focus:outline-none"
+                  />
+                ) : (
+                  <span
+                    onClick={() => startEdit(todo)}
+                    {...(canEdit && {
+                      role: "button",
+                      tabIndex: 0,
+                      onKeyDown: (e: React.KeyboardEvent) =>
+                        e.key === "Enter" && startEdit(todo),
+                      title: "click to edit",
+                    })}
+                    className={`hand text-lg leading-snug flex-1 ${canEdit ? "cursor-text" : ""}`}
+                  >
+                    {todo.title}
+                  </span>
+                )}
                 {canEdit && (
                   <button
                     onClick={() => remove(todo)}

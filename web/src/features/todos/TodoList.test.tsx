@@ -126,6 +126,46 @@ describe("TodoList", () => {
     expect(screen.queryByText("water the plants")).not.toBeInTheDocument();
   });
 
+  it("lets the admin rename an item in place", async () => {
+    const user = userEvent.setup();
+    const todo = make({ title: "water the plants" });
+    render(<TodoList canEdit initialTodos={[todo]} />);
+    updateTodo.mockResolvedValue({ ...todo, title: "water the cactus" });
+
+    await user.click(screen.getByText("water the plants"));
+    const input = screen.getByLabelText('edit "water the plants"');
+    await user.clear(input);
+    await user.type(input, "water the cactus{Enter}");
+
+    expect(updateTodo).toHaveBeenCalledWith(todo.id, { title: "water the cactus" });
+    expect(await screen.findByText("water the cactus")).toBeInTheDocument();
+  });
+
+  it("escape abandons a rename", async () => {
+    const user = userEvent.setup();
+    const todo = make({ title: "water the plants" });
+    render(<TodoList canEdit initialTodos={[todo]} />);
+
+    await user.click(screen.getByText("water the plants"));
+    await user.type(screen.getByLabelText('edit "water the plants"'), " and more{Escape}");
+
+    expect(updateTodo).not.toHaveBeenCalled();
+    expect(screen.getByText("water the plants")).toBeInTheDocument();
+  });
+
+  it("a blank rename closes the editor without saving", async () => {
+    const user = userEvent.setup();
+    const todo = make({ title: "water the plants" });
+    render(<TodoList canEdit initialTodos={[todo]} />);
+
+    await user.click(screen.getByText("water the plants"));
+    await user.clear(screen.getByLabelText('edit "water the plants"'));
+    await user.keyboard("{Enter}");
+
+    expect(updateTodo).not.toHaveBeenCalled();
+    expect(screen.getByText("water the plants")).toBeInTheDocument();
+  });
+
   it("uncrossing moves an item back to the open list", async () => {
     const user = userEvent.setup();
     const todo = make({
