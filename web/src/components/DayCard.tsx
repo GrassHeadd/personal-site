@@ -11,14 +11,14 @@ import {
 interface DayCardProps {
   dateKey: string; // YYYY-MM-DD
   events: CalEvent[];
-  adminKey: string | null;
+  canEdit: boolean;
   onClose: () => void;
   onChanged: () => void;
 }
 
 const emptyForm = { title: "", note: "", color: "forest" as "forest" | "amber" };
 
-const DayCard = ({ dateKey, events, adminKey, onClose, onChanged }: DayCardProps) => {
+const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps) => {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
