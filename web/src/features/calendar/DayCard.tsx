@@ -6,7 +6,7 @@ import {
   updateEvent,
   deleteEvent,
   type CalEvent,
-} from "@/lib/calendar/api";
+} from "@/features/calendar/api";
 
 interface DayCardProps {
   dateKey: string; // YYYY-MM-DD

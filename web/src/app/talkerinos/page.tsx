@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Footer from "@/sections/Footer";
-import PostCard from "@/components/PostCard";
-import Squiggle from "@/components/Squiggle";
-import { getPosts, type Post } from "@/lib/talkerinos";
+import Footer from "@/shared/components/Footer";
+import PostCard from "@/features/talkerinos/PostCard";
+import Squiggle from "@/shared/components/Squiggle";
+import { getPosts, type Post } from "@/features/talkerinos";
 
 export default function Talkerinos() {
   const [posts, setPosts] = useState<Post[]>([]);

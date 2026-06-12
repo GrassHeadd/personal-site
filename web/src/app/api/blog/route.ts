@@ -1,4 +1,5 @@
-import { sb, toGoPost, authorized, unauthorized, type PostRow } from "@/lib/talkerinos/db";
+import { sb, authorized, unauthorized } from "@/shared/db";
+import { toGoPost, type PostRow } from "@/features/talkerinos/db";
 
 export async function GET() {
   const res = await sb("posts?published=eq.true&order=created_at.desc");

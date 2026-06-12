@@ -1,15 +1,15 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import Squiggle from "@/components/Squiggle";
-import Footer from "@/sections/Footer";
+import Squiggle from "@/shared/components/Squiggle";
+import Footer from "@/shared/components/Footer";
 import {
   createTodo,
   deleteTodo,
   getTodos,
   updateTodo,
   type Todo,
-} from "@/lib/todos/api";
+} from "@/features/todos/api";
 
 export default function TodosPage() {
   const [todos, setTodos] = useState<Todo[]>([]);

@@ -1,4 +1,4 @@
-import { checkPassword, createSession } from "@/auth";
+import { checkPassword, createSession } from "@/shared/auth";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);

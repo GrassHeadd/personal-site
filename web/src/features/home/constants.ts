@@ -1,13 +1,11 @@
-import type { NavLink, ExpCard } from "../types";
+export interface ExpCard {
+  title: string;
+  company: string;
+  date: string;
+  responsibilities: string[];
+}
 
-const navLinks: NavLink[] = [
-  { name: "app hub", link: "/projects" },
-  { name: "calendar", link: "/calendar" },
-  { name: "to-dos", link: "/todos" },
-  { name: "talkerinos", link: "/talkerinos" },
-];
-
-const expCards: ExpCard[] = [
+export const expCards: ExpCard[] = [
   {
     title: "Member of Technical Staff",
     company: "Didero",
@@ -36,5 +34,3 @@ const expCards: ExpCard[] = [
     ],
   },
 ];
-
-export { expCards, navLinks };

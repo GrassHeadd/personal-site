@@ -5,11 +5,11 @@ const { sb, isAdmin } = vi.hoisted(() => ({
   isAdmin: vi.fn(),
 }));
 
-vi.mock("@/lib/talkerinos/db", () => ({
+vi.mock("@/shared/db", () => ({
   sb,
   unauthorized: () => Response.json({ error: "Unauthorised" }, { status: 401 }),
 }));
-vi.mock("@/auth", () => ({ isAdmin }));
+vi.mock("@/shared/auth", () => ({ isAdmin }));
 
 import { DELETE, PATCH } from "./route";
 

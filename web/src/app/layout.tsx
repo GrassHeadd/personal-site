@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Shantell_Sans, Atkinson_Hyperlegible } from "next/font/google";
 import "./globals.css";
 
-import Navbar from "@/components/Navbar";
+import Navbar from "@/shared/components/Navbar";
 
 const shantell = Shantell_Sans({
   subsets: ["latin"],

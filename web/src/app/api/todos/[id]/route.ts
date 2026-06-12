@@ -1,5 +1,5 @@
-import { sb, unauthorized } from "@/lib/talkerinos/db";
-import { isAdmin } from "@/auth";
+import { sb, unauthorized } from "@/shared/db";
+import { isAdmin } from "@/shared/auth";
 
 type Params = { params: Promise<{ id: string }> };
 

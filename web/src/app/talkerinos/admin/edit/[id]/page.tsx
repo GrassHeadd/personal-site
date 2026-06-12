@@ -2,14 +2,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Footer from "@/sections/Footer";
+import Footer from "@/shared/components/Footer";
 import {
   getPostById,
   updatePost,
   chatStream,
   type Post,
   type ChatMessage,
-} from "@/lib/talkerinos";
+} from "@/features/talkerinos";
 
 export default function EditPost() {
   const params = useParams();

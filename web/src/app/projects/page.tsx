@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Footer from "@/sections/Footer";
+import Footer from "@/shared/components/Footer";
 
 export default function Projects() {
   return (

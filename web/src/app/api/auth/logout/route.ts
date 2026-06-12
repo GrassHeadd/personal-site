@@ -1,4 +1,4 @@
-import { destroySession } from "@/auth";
+import { destroySession } from "@/shared/auth";
 
 export async function POST() {
   await destroySession();

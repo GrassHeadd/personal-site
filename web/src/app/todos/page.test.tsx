@@ -4,7 +4,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Todo } from "@/lib/todos/api";
+import type { Todo } from "@/features/todos/api";
 
 const { getTodos, createTodo, updateTodo, deleteTodo } = vi.hoisted(() => ({
   getTodos: vi.fn(),
@@ -13,12 +13,12 @@ const { getTodos, createTodo, updateTodo, deleteTodo } = vi.hoisted(() => ({
   deleteTodo: vi.fn(),
 }));
 
-vi.mock("@/lib/todos/api", () => ({ getTodos, createTodo, updateTodo, deleteTodo }));
+vi.mock("@/features/todos/api", () => ({ getTodos, createTodo, updateTodo, deleteTodo }));
 
 /* chrome around the list is not under test */
-vi.mock("@/components/Navbar", () => ({ default: () => null }));
-vi.mock("@/components/Squiggle", () => ({ default: () => null }));
-vi.mock("@/sections/Footer", () => ({ default: () => null }));
+vi.mock("@/shared/components/Navbar", () => ({ default: () => null }));
+vi.mock("@/shared/components/Squiggle", () => ({ default: () => null }));
+vi.mock("@/shared/components/Footer", () => ({ default: () => null }));
 
 import TodosPage from "./page";
 

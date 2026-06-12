@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import ContactForm from "@/components/ContactForm";
-import Squiggle from "@/components/Squiggle";
-import Footer from "@/sections/Footer";
-import { expCards } from "@/constants";
+import ContactForm from "@/features/home/ContactForm";
+import Squiggle from "@/shared/components/Squiggle";
+import Footer from "@/shared/components/Footer";
+import { expCards } from "@/features/home/constants";
 
 const projects = [
   {

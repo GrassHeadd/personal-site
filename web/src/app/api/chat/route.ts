@@ -1,4 +1,4 @@
-import { authorized, unauthorized } from "@/lib/talkerinos/db";
+import { authorized, unauthorized } from "@/shared/db";
 
 const SYSTEM_PROMPT = `You are a helpful blog editing assistant. Your job is to help writers improve their drafts.
 

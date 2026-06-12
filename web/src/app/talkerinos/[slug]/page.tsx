@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import Footer from "@/sections/Footer";
-import { getPostBySlug, type Post } from "@/lib/talkerinos";
+import Footer from "@/shared/components/Footer";
+import { getPostBySlug, type Post } from "@/features/talkerinos";
 
 export default function PostPage() {
   const params = useParams();

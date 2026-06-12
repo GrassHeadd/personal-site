@@ -1,10 +1,10 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import Squiggle from "@/components/Squiggle";
-import DayCard from "@/components/DayCard";
-import Footer from "@/sections/Footer";
-import { getEvents, type CalEvent } from "@/lib/calendar/api";
+import Squiggle from "@/shared/components/Squiggle";
+import DayCard from "@/features/calendar/DayCard";
+import Footer from "@/shared/components/Footer";
+import { getEvents, type CalEvent } from "@/features/calendar/api";
 
 const MONTHS = [
   "january", "february", "march", "april", "may", "june",

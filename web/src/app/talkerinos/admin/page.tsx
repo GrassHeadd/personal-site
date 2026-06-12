@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Footer from "@/sections/Footer";
+import Footer from "@/shared/components/Footer";
 import {
   getPosts,
   getDrafts,
@@ -10,7 +10,7 @@ import {
   updatePost,
   deletePost,
   type Post,
-} from "@/lib/talkerinos";
+} from "@/features/talkerinos";
 
 type View = "list" | "create" | "edit";
 

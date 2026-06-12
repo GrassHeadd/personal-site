@@ -1,5 +1,5 @@
-import { sb, unauthorized } from "@/lib/talkerinos/db";
-import { isAdmin } from "@/auth";
+import { sb, unauthorized } from "@/shared/db";
+import { isAdmin } from "@/shared/auth";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 

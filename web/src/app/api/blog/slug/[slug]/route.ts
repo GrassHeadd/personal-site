@@ -1,4 +1,5 @@
-import { sb, toGoPost, type PostRow } from "@/lib/talkerinos/db";
+import { sb } from "@/shared/db";
+import { toGoPost, type PostRow } from "@/features/talkerinos/db";
 
 export async function GET(
   _req: Request,
