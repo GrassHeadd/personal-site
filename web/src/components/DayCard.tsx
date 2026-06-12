@@ -39,7 +39,11 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
 
   const startEdit = (ev: CalEvent) => {
     setEditingId(ev.id);
-    setForm({ title: ev.title, note: ev.note ?? "", color: ev.color });
+    setForm({
+      title: ev.title,
+      note: ev.note ?? "",
+      color: ev.color === "amber" ? "amber" : "forest",
+    });
     setConfirmId(null);
   };
 
@@ -120,7 +124,11 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
               <li key={ev.id} className="flex items-start gap-2">
                 <span
                   className={`mt-1.5 size-2.5 rounded-full shrink-0 ${
-                    ev.color === "amber" ? "bg-amber" : "bg-forest"
+                    ev.color === "pencil"
+                      ? "bg-pencil"
+                      : ev.color === "amber"
+                        ? "bg-amber"
+                        : "bg-forest"
                   }`}
                   aria-hidden="true"
                 />
@@ -130,7 +138,7 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
                     <p className="text-ink-soft text-sm leading-snug">{ev.note}</p>
                   )}
                 </div>
-                {canEdit && (
+                {canEdit && ev.source !== "feed" && (
                   <span className="flex gap-2 shrink-0 text-sm">
                     <button
                       onClick={() => startEdit(ev)}

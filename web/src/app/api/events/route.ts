@@ -1,5 +1,6 @@
 import { sb, unauthorized } from "@/lib/talkerinos/db";
 import { isAdmin } from "@/auth";
+import { getFeedEvents } from "@/lib/calendar/feeds";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -16,7 +17,14 @@ export async function GET(req: Request) {
   if (!res.ok) {
     return Response.json({ error: await res.text() }, { status: 500 });
   }
-  return Response.json(await res.json());
+  const events = await res.json();
+
+  /* synced calendars are personal: only merged for jj (or local dev) */
+  const showFeeds = process.env.NODE_ENV === "development" || (await isAdmin());
+  if (showFeeds && from && to) {
+    events.push(...(await getFeedEvents(from, to)));
+  }
+  return Response.json(events);
 }
 
 export async function POST(req: Request) {

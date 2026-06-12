@@ -117,8 +117,12 @@ export default function CalendarPage() {
   const chip = (ev: CalEvent) => (
     <span
       key={ev.id}
-      className={`hand text-[11px] leading-tight px-1 py-px rounded text-paper truncate ${
-        ev.color === "amber" ? "bg-amber" : "bg-forest"
+      className={`hand text-[11px] leading-tight px-1 py-px rounded truncate ${
+        ev.color === "pencil"
+          ? "bg-paper-2 text-ink-soft border border-pencil"
+          : ev.color === "amber"
+            ? "bg-amber text-paper"
+            : "bg-forest text-paper"
       }`}
     >
       {ev.title}

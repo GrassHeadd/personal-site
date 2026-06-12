@@ -3,7 +3,8 @@ export interface CalEvent {
   date: string; // YYYY-MM-DD
   title: string;
   note: string | null;
-  color: "forest" | "amber";
+  color: "forest" | "amber" | "pencil";
+  source?: "feed";
 }
 
 export interface CalEventInput {

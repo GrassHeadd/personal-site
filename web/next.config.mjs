@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
+  // node-ical breaks when bundled; load it as a plain node dependency
+  serverExternalPackages: ['node-ical'],
   turbopack: {},
 };
 
