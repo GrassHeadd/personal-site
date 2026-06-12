@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import {
   createEvent,
@@ -97,7 +98,9 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
     }
   };
 
-  return (
+  /* portal to <body>: transformed ancestors would otherwise capture
+     position:fixed and pin the card inside their own box */
+  return createPortal(
     <div
       className="fixed inset-0 z-[200] flex items-center justify-center bg-ink/25 backdrop-blur-[2px] p-4"
       onClick={onClose}
@@ -206,7 +209,8 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

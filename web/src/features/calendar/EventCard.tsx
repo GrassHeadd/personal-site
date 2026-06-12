@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import {
   updateEvent,
@@ -70,13 +71,16 @@ export default function EventCard({
     }
   };
 
-  return (
+  /* portal to <body>: ancestors with transforms (the sketchy cards'
+     rise/rotate styling) would otherwise capture position:fixed and pin
+     the popup inside their own box instead of the viewport */
+  return createPortal(
     <div
       className="fixed inset-0 z-[200] flex items-center justify-center bg-ink/25 backdrop-blur-[2px] p-4"
       onClick={onClose}
     >
       <div
-        className="sketch-border bg-paper w-full max-w-md max-h-[85vh] overflow-y-auto p-6 md:p-8 -rotate-[0.5deg] shadow-[4px_6px_0_rgba(51,48,42,0.08)]"
+        className="sketch-border bg-paper w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 md:p-8 -rotate-[0.5deg] shadow-[4px_6px_0_rgba(51,48,42,0.08)]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label={event.title}
@@ -148,6 +152,7 @@ export default function EventCard({
           </p>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
