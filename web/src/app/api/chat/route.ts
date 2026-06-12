@@ -1,4 +1,6 @@
+import { z } from "zod";
 import { authorized, unauthorized } from "@/shared/db";
+import { badRequest } from "@/shared/validation";
 
 const SYSTEM_PROMPT = `You are a helpful blog editing assistant. Your job is to help writers improve their drafts.
 
@@ -17,12 +19,14 @@ Always be concise and actionable. Use plain text only, no markdown formatting.`;
 const ENHANCE_PROMPT =
   "Enhance this text - make it clearer and more engaging while keeping the original voice.";
 
-interface ChatBody {
-  message?: string;
-  selectedText?: string;
-  fullDraft?: string;
-  history?: { role: "user" | "assistant"; content: string }[];
-}
+const chatBody = z.object({
+  message: z.string().optional(),
+  selectedText: z.string().optional(),
+  fullDraft: z.string().optional(),
+  history: z
+    .array(z.object({ role: z.enum(["user", "assistant"]), content: z.string() }))
+    .optional(),
+});
 
 export async function POST(req: Request) {
   if (!authorized(req)) return unauthorized();
@@ -32,10 +36,9 @@ export async function POST(req: Request) {
     return Response.json({ error: "OPENAI_API_KEY not configured" }, { status: 500 });
   }
 
-  const body: ChatBody | null = await req.json().catch(() => null);
-  if (!body) {
-    return Response.json({ error: "invalid request" }, { status: 400 });
-  }
+  const parsed = chatBody.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return badRequest(parsed.error);
+  const body = parsed.data;
 
   const messages: { role: string; content: string }[] = [
     { role: "system", content: SYSTEM_PROMPT },
