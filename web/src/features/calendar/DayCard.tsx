@@ -6,9 +6,21 @@ import {
   updateEvent,
   deleteEvent,
   type CalEvent,
+  type Recur,
 } from "@/features/calendar/api";
 import TimeWheel from "./TimeWheel";
 import { fmtTime, plusOneHour } from "./time";
+
+const SHORT_MONTHS = [
+  "jan", "feb", "mar", "apr", "may", "jun",
+  "jul", "aug", "sep", "oct", "nov", "dec",
+];
+
+/* "2026-06-15" -> "jun 15", straight off the string so no timezone drama */
+const fmtShortDate = (ymd: string) =>
+  `${SHORT_MONTHS[Number(ymd.slice(5, 7)) - 1]} ${Number(ymd.slice(8, 10))}`;
+
+const RECUR_CHOICES = ["once", "daily", "weekly", "monthly", "yearly"] as const;
 
 interface DayCardProps {
   dateKey: string; // YYYY-MM-DD
@@ -24,6 +36,11 @@ const emptyForm = {
   color: "forest" as "forest" | "amber",
   start: null as string | null,
   end: null as string | null,
+  endDate: null as string | null,
+  recur: null as Recur | null,
+  /* carried through edits, never rendered as inputs */
+  seriesDate: null as string | null,
+  todoId: null as string | null,
 };
 
 const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps) => {
@@ -53,6 +70,10 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
       color: ev.color,
       start: ev.start_time,
       end: ev.end_time,
+      endDate: ev.end_date,
+      recur: ev.recur,
+      seriesDate: ev.series_date ?? ev.date,
+      todoId: ev.todo_id,
     });
     setConfirmId(null);
   };
@@ -69,12 +90,16 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
     setError(null);
     try {
       const data = {
-        date: dateKey,
+        /* edits must keep the series anchored to its true start date */
+        date: editingId ? (form.seriesDate ?? dateKey) : dateKey,
         title: form.title,
         note: form.note,
         color: form.color,
         start_time: form.start,
         end_time: form.start ? form.end : null,
+        end_date: form.endDate,
+        recur: form.recur,
+        todo_id: form.todoId,
       };
       if (editingId) {
         await updateEvent(editingId, data);
@@ -154,6 +179,19 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
                       </span>
                     )}
                     {ev.title}
+                    {ev.recur && (
+                      <span
+                        className="text-ink-soft text-sm ml-1.5"
+                        title={`repeats ${ev.recur}`}
+                      >
+                        ↻
+                      </span>
+                    )}
+                    {ev.end_date && (
+                      <span className="text-ink-soft text-sm ml-1.5">
+                        → {fmtShortDate(ev.end_date)}
+                      </span>
+                    )}
                   </p>
                   {ev.note && (
                     <p className="text-ink-soft text-sm leading-snug">{ev.note}</p>
@@ -196,6 +234,11 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
             <p className="hand text-sm font-bold text-ink-soft">
               {editingId ? "edit event ✏️" : "scribble something in ✏️"}
             </p>
+            {editingId && form.recur && (
+              <p className="hand text-xs text-ink-soft">
+                ↻ edits apply to every repeat
+              </p>
+            )}
             <input
               type="text"
               value={form.title}
@@ -230,6 +273,40 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
                   />
                 </>
               )}
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="hand text-sm text-ink-soft">until?</span>
+              <input
+                type="date"
+                min={dateKey}
+                value={form.endDate ?? ""}
+                onChange={(e) =>
+                  setForm({ ...form, endDate: e.target.value || null })
+                }
+                className="px-3 py-1.5 bg-paper sketch-border-soft text-sm text-ink-soft focus:outline-none focus:border-forest"
+                aria-label="last day (optional)"
+              />
+            </div>
+            <div className="flex flex-wrap items-baseline gap-3">
+              <span className="hand text-sm text-ink-soft">repeats?</span>
+              {RECUR_CHOICES.map((r) => {
+                const value = r === "once" ? null : r;
+                const selected = form.recur === value;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setForm({ ...form, recur: value })}
+                    className={`hand text-sm cursor-pointer focus:outline-none focus-visible:underline focus-visible:decoration-wavy ${
+                      selected
+                        ? "text-forest font-bold underline decoration-wavy underline-offset-4"
+                        : "quiet-link"
+                    }`}
+                  >
+                    {r}
+                  </button>
+                );
+              })}
             </div>
             <div className="flex items-center gap-3">
               {(["forest", "amber"] as const).map((c) => (

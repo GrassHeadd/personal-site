@@ -32,7 +32,7 @@ export default async function RootLayout({
   const admin = await isAdmin();
   return (
     <html lang="en" className={`${shantell.variable} ${atkinson.variable}`}>
-      <body>
+      <body className="flex min-h-screen flex-col">
         <Navbar initialAdmin={admin} />
         {children}
       </body>

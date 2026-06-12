@@ -180,7 +180,7 @@ export default function EditPost() {
   if (loading) {
     return (
       <>
-        <main className="min-h-screen pt-32 md:pt-40 pb-20">
+        <main className="flex-1 pt-32 md:pt-40 pb-20">
           <div className="text-center text-white-50">Loading...</div>
         </main>
         <Footer />
@@ -191,7 +191,7 @@ export default function EditPost() {
   if (!post) {
     return (
       <>
-        <main className="min-h-screen pt-32 md:pt-40 pb-20">
+        <main className="flex-1 pt-32 md:pt-40 pb-20">
           <div className="text-center text-red-400">Post not found</div>
         </main>
         <Footer />

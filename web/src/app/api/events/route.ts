@@ -3,6 +3,9 @@ import { isAdmin } from "@/shared/auth";
 import { insertEvent, listEvents, parseTime } from "@/features/calendar/model";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const RECURS = ["daily", "weekly", "monthly", "yearly"];
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -40,6 +43,17 @@ export async function POST(req: Request) {
       start_time: start,
       /* an end only makes sense after a start */
       end_time: start && end && end > start ? end : null,
+      end_date:
+        typeof body.end_date === "string" &&
+        DATE_RE.test(body.end_date) &&
+        body.end_date > body.date
+          ? body.end_date
+          : null,
+      recur: RECURS.includes(body.recur) ? body.recur : null,
+      todo_id:
+        typeof body.todo_id === "string" && UUID_RE.test(body.todo_id)
+          ? body.todo_id
+          : null,
     });
     return Response.json(row, { status: 201 });
   } catch (e) {

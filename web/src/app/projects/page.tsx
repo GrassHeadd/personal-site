@@ -4,7 +4,7 @@ import Footer from "@/shared/components/Footer";
 export default function Projects() {
   return (
     <>
-      <main className="min-h-screen flex flex-col items-center justify-center px-6">
+      <main className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="text-center max-w-xl">
           <div className="sketch-dashed inline-block py-2 px-5 mb-8 -rotate-2 text-sm font-semibold uppercase tracking-widest text-ink-soft">
             🚧 work in progress

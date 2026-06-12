@@ -7,6 +7,7 @@ type Params = { params: Promise<{ id: string }> };
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const RECURS = ["daily", "weekly", "monthly", "yearly"];
 
 export async function PUT(req: Request, { params }: Params) {
   if (!(await isAdmin())) return unauthorized();
@@ -31,6 +32,17 @@ export async function PUT(req: Request, { params }: Params) {
       start_time: start,
       /* an end only makes sense after a start */
       end_time: start && end && end > start ? end : null,
+      end_date:
+        typeof body.end_date === "string" &&
+        DATE_RE.test(body.end_date) &&
+        body.end_date > body.date
+          ? body.end_date
+          : null,
+      recur: RECURS.includes(body.recur) ? body.recur : null,
+      todo_id:
+        typeof body.todo_id === "string" && UUID_RE.test(body.todo_id)
+          ? body.todo_id
+          : null,
     });
     if (!row) return Response.json({ error: "not found" }, { status: 404 });
     return Response.json(row);

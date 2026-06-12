@@ -236,7 +236,7 @@ export default function TalkerinosAdmin() {
   if (!isAuthed) {
     return (
       <>
-        <main className="min-h-screen pt-32 md:pt-40 pb-20">
+        <main className="flex-1 pt-32 md:pt-40 pb-20">
           <div className="max-w-md mx-auto px-5">
             <h1 className="text-3xl font-bold text-cream mb-8 text-center">
               Talkerinos Admin
@@ -283,7 +283,7 @@ export default function TalkerinosAdmin() {
 
   return (
     <>
-      <main className="min-h-screen pt-32 md:pt-40 pb-20">
+      <main className="flex-1 pt-32 md:pt-40 pb-20">
         <div className="max-w-4xl mx-auto px-5 md:px-10">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">

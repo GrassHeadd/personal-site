@@ -2,6 +2,7 @@ import "server-only";
 
 import { sb } from "@/shared/db";
 import type { CalEvent } from "./api";
+import { expandEvents } from "./expand";
 
 /* Data access for calendar events. Functions take already-validated
    input and return rows, or throw with the PostgREST message; auth and
@@ -21,15 +22,38 @@ export interface EventInput {
   start_time: string | null;
   /* omitted = leave untouched (feed-synced events carry an end time) */
   end_time?: string | null;
+  end_date: string | null;
+  recur: string | null;
+  todo_id?: string | null;
 }
 
 export async function listEvents(
   range: { from?: string; to?: string } = {},
 ): Promise<CalEvent[]> {
+  const { from, to } = range;
+
+  if (from && to) {
+    /* with a window we can expand recurring series and multi-day spans:
+       singles overlapping the window, plus every series started by `to` */
+    const [singles, series] = await Promise.all([
+      sb(
+        `events?recur=is.null&date=lte.${to}&or=(end_date.gte.${from},date.gte.${from})&order=date.asc`,
+      ),
+      sb(`events?recur=not.is.null&date=lte.${to}&order=date.asc`),
+    ]);
+    if (!singles.ok) throw new Error(await singles.text());
+    if (!series.ok) throw new Error(await series.text());
+    return expandEvents(
+      [...(await singles.json()), ...(await series.json())],
+      from,
+      to,
+    );
+  }
+
   /* all-day events first, then timed ones in clock order */
   let q = "events?order=date.asc,start_time.asc.nullsfirst,created_at.asc";
-  if (range.from) q += `&date=gte.${range.from}`;
-  if (range.to) q += `&date=lte.${range.to}`;
+  if (from) q += `&date=gte.${from}`;
+  if (to) q += `&date=lte.${to}`;
   const res = await sb(q);
   if (!res.ok) throw new Error(await res.text());
   return res.json();

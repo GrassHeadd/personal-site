@@ -1,3 +1,5 @@
+export type Recur = "daily" | "weekly" | "monthly" | "yearly";
+
 export interface CalEvent {
   id: string;
   date: string; // YYYY-MM-DD
@@ -6,6 +8,11 @@ export interface CalEvent {
   color: "forest" | "amber";
   start_time: string | null; // HH:MM:SS
   end_time: string | null;
+  end_date: string | null; // multi-day events run date..end_date inclusive
+  recur: Recur | null;
+  todo_id: string | null;
+  /* set on expanded occurrences: the date the series row is stored under */
+  series_date?: string;
 }
 
 export interface CalEventInput {
@@ -15,6 +22,9 @@ export interface CalEventInput {
   color: "forest" | "amber";
   start_time?: string | null;
   end_time?: string | null;
+  end_date?: string | null;
+  recur?: string | null;
+  todo_id?: string | null;
 }
 
 /* Writes are authorised by the next-auth session cookie, which the browser

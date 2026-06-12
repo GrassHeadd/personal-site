@@ -5,7 +5,7 @@ const socials = [
 
 const Footer = () => {
   return (
-    <footer className="max-w-3xl mx-auto px-6 pt-20 pb-10">
+    <footer className="w-full max-w-3xl mx-auto px-6 pt-20 pb-10">
       <div className="border-t border-dashed border-pencil pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <p className="text-sm text-ink-soft">
           © {new Date().getFullYear()} Hu Junjie · made with a pencil ✏️

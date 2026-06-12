@@ -40,7 +40,7 @@ export default function PostPage() {
   if (loading) {
     return (
       <>
-        <main className="min-h-screen pt-32 md:pt-40 pb-20">
+        <main className="flex-1 pt-32 md:pt-40 pb-20">
           <div className="max-w-3xl mx-auto px-5 md:px-10">
             <div className="text-white-50">Loading...</div>
           </div>
@@ -53,7 +53,7 @@ export default function PostPage() {
   if (error || !post) {
     return (
       <>
-        <main className="min-h-screen pt-32 md:pt-40 pb-20">
+        <main className="flex-1 pt-32 md:pt-40 pb-20">
           <div className="max-w-3xl mx-auto px-5 md:px-10 text-center">
             <h1 className="text-4xl font-bold mb-4">
               post not found<span className="text-forest">.</span>
@@ -76,7 +76,7 @@ export default function PostPage() {
 
   return (
     <>
-      <main className="min-h-screen pt-32 md:pt-40 pb-20">
+      <main className="flex-1 pt-32 md:pt-40 pb-20">
         <article className="max-w-3xl mx-auto px-5 md:px-10">
           {/* Back link */}
           <Link

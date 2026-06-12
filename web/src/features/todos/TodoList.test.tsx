@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Todo } from "@/features/todos/api";
+import type { CalEvent } from "@/features/calendar/api";
 
 const { createTodo, updateTodo, deleteTodo } = vi.hoisted(() => ({
   createTodo: vi.fn(),
@@ -13,6 +14,11 @@ const { createTodo, updateTodo, deleteTodo } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/todos/api", () => ({ createTodo, updateTodo, deleteTodo }));
+
+/* DayPanel (rendered when `today` is passed) pulls in the app router */
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}));
 
 /* chrome around the list is not under test */
 vi.mock("@/shared/components/Squiggle", () => ({ default: () => null }));
@@ -27,6 +33,20 @@ const make = (over: Partial<Todo>): Todo => ({
   done_at: null,
   created_at: "2026-06-01T00:00:00Z",
   updated_at: "2026-06-01T00:00:00Z",
+  ...over,
+});
+
+const makeEvent = (over: Partial<CalEvent>): CalEvent => ({
+  id: "ev-" + Math.random(),
+  date: "2026-06-12",
+  title: "an event",
+  note: null,
+  color: "forest",
+  start_time: null,
+  end_time: null,
+  end_date: null,
+  recur: null,
+  todo_id: null,
   ...over,
 });
 
@@ -181,5 +201,38 @@ describe("TodoList", () => {
     expect(updateTodo).toHaveBeenCalledWith(todo.id, { done: false });
     expect(screen.getByText("learn the accordion")).not.toHaveClass("strike-wavy");
     expect(screen.queryByRole("heading", { name: /crossed off/ })).not.toBeInTheDocument();
+  });
+
+  it("marks a todo that's scheduled on today's panel", () => {
+    const todo = make({ title: "water the plants" });
+    render(
+      <TodoList
+        canEdit={false}
+        initialTodos={[todo, make({ title: "learn the accordion" })]}
+        today="2026-06-12"
+        todayEvents={[
+          makeEvent({ title: "water the plants", start_time: "09:00:00", todo_id: todo.id }),
+        ]}
+      />,
+    );
+
+    /* exactly one marker, and the unscheduled row stays unmarked */
+    expect(screen.getAllByTitle("scheduled today")).toHaveLength(1);
+    const marked = screen.getByTitle("scheduled today").closest("li");
+    expect(marked).toHaveTextContent("water the plants");
+  });
+
+  it("renders the day panel when today's date is passed", () => {
+    render(
+      <TodoList
+        canEdit={false}
+        initialTodos={[]}
+        today="2026-06-12"
+        todayEvents={[]}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: /today/ })).toBeInTheDocument();
+    expect(screen.getByText(/nothing scheduled today/)).toBeInTheDocument();
   });
 });

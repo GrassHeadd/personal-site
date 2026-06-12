@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <>
 
-      <main className="max-w-3xl mx-auto px-6 pt-36 md:pt-44">
+      <main className="w-full max-w-3xl mx-auto px-6 pt-36 md:pt-44 flex-1">
         {/* hero */}
         <section className="rise rise-1">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">

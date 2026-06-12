@@ -1,0 +1,160 @@
+// @vitest-environment jsdom
+import "@testing-library/jest-dom/vitest";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import type { CalEvent } from "@/features/calendar/api";
+
+const { createEvent, updateEvent, refresh } = vi.hoisted(() => ({
+  createEvent: vi.fn(),
+  updateEvent: vi.fn(),
+  refresh: vi.fn(),
+}));
+
+vi.mock("@/features/calendar/api", () => ({ createEvent, updateEvent }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
+
+import DayPanel from "./DayPanel";
+
+const makeEvent = (over: Partial<CalEvent>): CalEvent => ({
+  id: "ev-" + Math.random(),
+  date: "2026-06-12",
+  title: "an event",
+  note: null,
+  color: "forest",
+  start_time: null,
+  end_time: null,
+  end_date: null,
+  recur: null,
+  todo_id: null,
+  ...over,
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+afterEach(() => {
+  cleanup();
+});
+
+describe("DayPanel", () => {
+  it("renders a timed event with its formatted time range", () => {
+    render(
+      <DayPanel
+        today="2026-06-12"
+        canEdit={false}
+        events={[
+          makeEvent({ title: "standup", start_time: "09:00:00", end_time: "10:30:00" }),
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("standup")).toBeInTheDocument();
+    expect(screen.getByText(/9:00am – 10:30am/)).toBeInTheDocument();
+  });
+
+  it("puts an event without a start time in the all-day section", () => {
+    render(
+      <DayPanel
+        today="2026-06-12"
+        canEdit={false}
+        events={[
+          makeEvent({ title: "ship day" }),
+          makeEvent({ title: "standup", start_time: "09:00:00" }),
+        ]}
+      />,
+    );
+
+    const allDay = screen.getByLabelText("all day");
+    expect(within(allDay).getByText("ship day")).toBeInTheDocument();
+    expect(within(allDay).queryByText("standup")).not.toBeInTheDocument();
+  });
+
+  it("shows the right empty note for visitors and for the admin", () => {
+    const { unmount } = render(
+      <DayPanel today="2026-06-12" canEdit={false} events={[]} />,
+    );
+    expect(screen.getByText(/nothing scheduled today/)).toBeInTheDocument();
+    unmount();
+
+    render(<DayPanel today="2026-06-12" canEdit events={[]} />);
+    expect(screen.getByText(/drag a to-do in/)).toBeInTheDocument();
+  });
+
+  it("creates a one-hour event when a todo is dropped on a slot", async () => {
+    createEvent.mockResolvedValue(makeEvent({ title: "water the plants" }));
+    render(<DayPanel today="2026-06-12" canEdit events={[]} />);
+
+    /* jsdom rects are all zero, so clientY is the offset from the grid top:
+       96px = 2 hours below 7am = a 9:00am slot. jsdom has no DragEvent and
+       drops clientY from fireEvent's init, so build the event by hand. */
+    const drop = new Event("drop", { bubbles: true, cancelable: true });
+    Object.assign(drop, {
+      clientY: 96,
+      dataTransfer: {
+        getData: () => JSON.stringify({ id: "todo-1", title: "water the plants" }),
+      },
+    });
+    fireEvent(screen.getByTestId("day-timeline"), drop);
+
+    await waitFor(() =>
+      expect(createEvent).toHaveBeenCalledWith({
+        date: "2026-06-12",
+        title: "water the plants",
+        color: "forest",
+        start_time: "09:00:00",
+        end_time: "10:00:00",
+        todo_id: "todo-1",
+      }),
+    );
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+
+  it("moves an event with a complete PUT payload when its block is dragged", async () => {
+    const ev = makeEvent({
+      id: "ev-move",
+      title: "standup",
+      start_time: "09:00:00",
+      end_time: "10:00:00",
+      recur: "daily",
+      series_date: "2026-06-01",
+      todo_id: "todo-1",
+    });
+    updateEvent.mockResolvedValue(ev);
+    render(<DayPanel today="2026-06-12" canEdit events={[ev]} />);
+
+    const block = screen.getByText("standup").closest("div")!;
+    /* 48px down = one hour later */
+    fireEvent.pointerDown(block, { clientY: 100, pointerId: 1 });
+    fireEvent.pointerMove(block, { clientY: 148, pointerId: 1 });
+    fireEvent.pointerUp(block, { clientY: 148, pointerId: 1 });
+
+    await waitFor(() =>
+      expect(updateEvent).toHaveBeenCalledWith("ev-move", {
+        date: "2026-06-01" /* the series row's date, not today's occurrence */,
+        title: "standup",
+        note: "",
+        color: "forest",
+        start_time: "10:00:00",
+        end_time: "11:00:00",
+        end_date: null,
+        recur: "daily",
+        todo_id: "todo-1",
+      }),
+    );
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+
+  it("treats a sub-4px wiggle as a click, not a move", () => {
+    const ev = makeEvent({ id: "ev-still", title: "standup", start_time: "09:00:00" });
+    render(<DayPanel today="2026-06-12" canEdit events={[ev]} />);
+
+    const block = screen.getByText("standup").closest("div")!;
+    fireEvent.pointerDown(block, { clientY: 100, pointerId: 1 });
+    fireEvent.pointerMove(block, { clientY: 102, pointerId: 1 });
+    fireEvent.pointerUp(block, { clientY: 102, pointerId: 1 });
+
+    expect(updateEvent).not.toHaveBeenCalled();
+  });
+});

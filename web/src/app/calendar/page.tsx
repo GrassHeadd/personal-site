@@ -137,6 +137,7 @@ export default function CalendarPage() {
         ev.color === "amber" ? "bg-amber" : "bg-forest"
       }`}
     >
+      {ev.recur && "↻ "}
       {withTime && ev.start_time && (
         <span className="font-bold">{fmtTime(ev.start_time)} </span>
       )}
@@ -148,7 +149,7 @@ export default function CalendarPage() {
 
   return (
     <>
-      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 min-h-screen">
+      <main className="w-full max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 flex-1">
         <h1 className="text-4xl md:text-6xl font-bold mb-2">
           calendar<span className="text-forest">.</span>
         </h1>

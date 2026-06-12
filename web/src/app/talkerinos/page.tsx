@@ -28,7 +28,7 @@ export default function Talkerinos() {
 
   return (
     <>
-      <main className="min-h-screen pt-32 md:pt-40 pb-20">
+      <main className="flex-1 pt-32 md:pt-40 pb-20">
         <div className="max-w-4xl mx-auto px-5 md:px-10">
           {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-16">
