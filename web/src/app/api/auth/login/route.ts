@@ -1,8 +1,11 @@
+import { z } from "zod";
 import { checkPassword, createSession } from "@/shared/auth";
 
+const loginBody = z.object({ password: z.string() });
+
 export async function POST(req: Request) {
-  const body = await req.json().catch(() => null);
-  if (typeof body?.password !== "string" || !checkPassword(body.password)) {
+  const body = loginBody.safeParse(await req.json().catch(() => null));
+  if (!body.success || !checkPassword(body.data.password)) {
     return Response.json({ error: "Unauthorised" }, { status: 401 });
   }
   await createSession();

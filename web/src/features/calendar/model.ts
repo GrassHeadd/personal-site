@@ -8,12 +8,6 @@ import { expandEvents } from "./expand";
    input and return rows, or throw with the PostgREST message; auth and
    request validation stay in the route handlers. */
 
-const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
-
-/* "14:15" or "14:15:00" -> "14:15:00"; anything else -> null (all-day) */
-export const parseTime = (v: unknown): string | null =>
-  typeof v === "string" && TIME_RE.test(v) ? v.slice(0, 5) + ":00" : null;
-
 export interface EventInput {
   date: string;
   title: string;

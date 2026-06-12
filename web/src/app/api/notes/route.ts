@@ -1,23 +1,18 @@
 import { serverError, unauthorized } from "@/shared/db";
+import { badRequest } from "@/shared/validation";
 import { isAdmin } from "@/shared/auth";
 import { listNotes, removeNote, upsertNote } from "@/features/calendar/model";
-
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const KINDS = ["day", "week", "month", "year"];
+import { noteBody, noteQuery } from "@/features/calendar/validation";
 
 export async function GET(req: Request) {
   if (!(await isAdmin())) return unauthorized();
 
   const { searchParams } = new URL(req.url);
-  const from = searchParams.get("from");
-  const to = searchParams.get("to");
-  if (!from || !to || !DATE_RE.test(from) || !DATE_RE.test(to)) {
-    return Response.json(
-      { error: "from and to (YYYY-MM-DD) required" },
-      { status: 400 },
-    );
-  }
+  const query = noteQuery.safeParse(Object.fromEntries(searchParams));
+  if (!query.success) return badRequest(query.error);
+
   try {
+    const { from, to } = query.data;
     return Response.json(await listNotes(from, to));
   } catch (e) {
     return serverError(e);
@@ -28,29 +23,16 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
   if (!(await isAdmin())) return unauthorized();
 
-  const body = await req.json().catch(() => null);
-  if (!body || !KINDS.includes(body.kind) || !DATE_RE.test(body.anchor ?? "")) {
-    return Response.json(
-      { error: "kind and anchor (YYYY-MM-DD) required" },
-      { status: 400 },
-    );
-  }
+  const body = noteBody.safeParse(await req.json().catch(() => null));
+  if (!body.success) return badRequest(body.error);
 
-  const note = typeof body.note === "string" ? body.note.trim() : "";
+  const { kind, anchor, note, braindump_ref } = body.data;
   try {
     if (!note) {
-      await removeNote(body.kind, body.anchor);
+      await removeNote(kind, anchor);
       return new Response(null, { status: 204 });
     }
-    const row = await upsertNote({
-      kind: body.kind,
-      anchor: body.anchor,
-      note,
-      braindump_ref:
-        typeof body.braindump_ref === "string" && body.braindump_ref.trim()
-          ? body.braindump_ref.trim()
-          : null,
-    });
+    const row = await upsertNote({ kind, anchor, note, braindump_ref });
     return Response.json(row);
   } catch (e) {
     return serverError(e);

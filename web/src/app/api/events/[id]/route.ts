@@ -1,49 +1,23 @@
 import { serverError, unauthorized } from "@/shared/db";
+import { badRequest, isUuid } from "@/shared/validation";
 import { isAdmin } from "@/shared/auth";
-import { parseTime, removeEvent, replaceEvent } from "@/features/calendar/model";
+import { removeEvent, replaceEvent } from "@/features/calendar/model";
+import { eventBody } from "@/features/calendar/validation";
 
 type Params = { params: Promise<{ id: string }> };
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const RECURS = ["daily", "weekly", "monthly", "yearly"];
 
 export async function PUT(req: Request, { params }: Params) {
   if (!(await isAdmin())) return unauthorized();
 
   const { id } = await params;
-  if (!UUID_RE.test(id)) {
+  if (!isUuid(id)) {
     return Response.json({ error: "invalid id" }, { status: 400 });
   }
-  const body = await req.json().catch(() => null);
-  if (!body?.title?.trim() || !DATE_RE.test(body?.date ?? "")) {
-    return Response.json({ error: "title and date (YYYY-MM-DD) required" }, { status: 400 });
-  }
+  const body = eventBody.safeParse(await req.json().catch(() => null));
+  if (!body.success) return badRequest(body.error);
 
   try {
-    const start = parseTime(body.start_time);
-    const end = parseTime(body.end_time);
-    const row = await replaceEvent(id, {
-      date: body.date,
-      title: body.title.trim(),
-      note: body.note?.trim() || null,
-      color: body.color === "amber" ? "amber" : "forest",
-      start_time: start,
-      /* an end only makes sense after a start */
-      end_time: start && end && end > start ? end : null,
-      end_date:
-        typeof body.end_date === "string" &&
-        DATE_RE.test(body.end_date) &&
-        body.end_date > body.date
-          ? body.end_date
-          : null,
-      recur: RECURS.includes(body.recur) ? body.recur : null,
-      todo_id:
-        typeof body.todo_id === "string" && UUID_RE.test(body.todo_id)
-          ? body.todo_id
-          : null,
-    });
+    const row = await replaceEvent(id, body.data);
     if (!row) return Response.json({ error: "not found" }, { status: 404 });
     return Response.json(row);
   } catch (e) {
@@ -55,7 +29,7 @@ export async function DELETE(_req: Request, { params }: Params) {
   if (!(await isAdmin())) return unauthorized();
 
   const { id } = await params;
-  if (!UUID_RE.test(id)) {
+  if (!isUuid(id)) {
     return Response.json({ error: "invalid id" }, { status: 400 });
   }
   try {
