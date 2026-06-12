@@ -104,7 +104,7 @@ export default function ScribbleWall({
         </h1>
         <Squiggle className="w-44 md:w-60 h-3 mb-2" />
         <p className="rise rise-2 text-ink-soft max-w-xl mb-8">
-          The braindump pad. Whatever's in the head goes here, filed under
+          The braindump pad. Whatever’s in the head goes here, filed under
           today.
         </p>
 

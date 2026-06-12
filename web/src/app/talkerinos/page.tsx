@@ -61,7 +61,7 @@ export default function Talkerinos() {
           ) : posts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-white-50 text-lg">
-                I'm a boring person so I don't have any posts yet:(
+                I’m a boring person so I don’t have any posts yet:(
               </p>
             </div>
           ) : (
