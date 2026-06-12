@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createTodo, deleteTodo, getTodos, updateTodo, type Todo } from "./api";
+import { createTodo, deleteTodo, updateTodo, type Todo } from "./api";
 
 const fetchMock = vi.fn();
 
@@ -20,20 +20,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
-});
-
-describe("getTodos", () => {
-  it("fetches the list uncached", async () => {
-    fetchMock.mockResolvedValue(Response.json([todo]));
-
-    expect(await getTodos()).toEqual([todo]);
-    expect(fetchMock).toHaveBeenCalledWith("/api/todos", { cache: "no-store" });
-  });
-
-  it("throws when the request fails", async () => {
-    fetchMock.mockResolvedValue(new Response(null, { status: 500 }));
-    await expect(getTodos()).rejects.toThrow("Failed to fetch todos");
-  });
 });
 
 describe("createTodo", () => {

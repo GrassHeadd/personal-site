@@ -10,12 +10,6 @@ export interface Todo {
 /* Writes are authorised by the admin session cookie, which the browser
    sends automatically on same-origin requests — no key to pass around. */
 
-export async function getTodos(): Promise<Todo[]> {
-  const res = await fetch("/api/todos", { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch todos");
-  return res.json();
-}
-
 export async function createTodo(title: string): Promise<Todo> {
   const res = await fetch("/api/todos", {
     method: "POST",
