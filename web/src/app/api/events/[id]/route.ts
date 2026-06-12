@@ -1,5 +1,6 @@
-import { sb, unauthorized } from "@/shared/db";
+import { serverError, unauthorized } from "@/shared/db";
 import { isAdmin } from "@/shared/auth";
+import { removeEvent, replaceEvent } from "@/features/calendar/model";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -19,24 +20,18 @@ export async function PUT(req: Request, { params }: Params) {
     return Response.json({ error: "title and date (YYYY-MM-DD) required" }, { status: 400 });
   }
 
-  const res = await sb(`events?id=eq.${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
+  try {
+    const row = await replaceEvent(id, {
       date: body.date,
       title: body.title.trim(),
       note: body.note?.trim() || null,
       color: body.color === "amber" ? "amber" : "forest",
-      updated_at: new Date().toISOString(),
-    }),
-  });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+    });
+    if (!row) return Response.json({ error: "not found" }, { status: 404 });
+    return Response.json(row);
+  } catch (e) {
+    return serverError(e);
   }
-  const rows = await res.json();
-  if (!rows.length) {
-    return Response.json({ error: "not found" }, { status: 404 });
-  }
-  return Response.json(rows[0]);
 }
 
 export async function DELETE(_req: Request, { params }: Params) {
@@ -46,9 +41,10 @@ export async function DELETE(_req: Request, { params }: Params) {
   if (!UUID_RE.test(id)) {
     return Response.json({ error: "invalid id" }, { status: 400 });
   }
-  const res = await sb(`events?id=eq.${id}`, { method: "DELETE" });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    await removeEvent(id);
+    return new Response(null, { status: 204 });
+  } catch (e) {
+    return serverError(e);
   }
-  return new Response(null, { status: 204 });
 }

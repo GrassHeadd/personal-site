@@ -1,5 +1,5 @@
-import { sb, authorized, unauthorized } from "@/shared/db";
-import { toGoPost, type PostRow } from "@/features/talkerinos/db";
+import { authorized, serverError, unauthorized } from "@/shared/db";
+import { getPost, removePost, replacePost } from "@/features/talkerinos/model";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -11,15 +11,13 @@ export async function GET(_req: Request, { params }: Params) {
   if (!UUID_RE.test(id)) {
     return Response.json({ error: "Invalid id" }, { status: 400 });
   }
-  const res = await sb(`posts?id=eq.${id}&limit=1`);
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    const post = await getPost(id);
+    if (!post) return Response.json({ error: "not found" }, { status: 404 });
+    return Response.json(post);
+  } catch (e) {
+    return serverError(e);
   }
-  const rows: PostRow[] = await res.json();
-  if (!rows.length) {
-    return Response.json({ error: "not found" }, { status: 404 });
-  }
-  return Response.json(toGoPost(rows[0]));
 }
 
 export async function PUT(req: Request, { params }: Params) {
@@ -34,24 +32,18 @@ export async function PUT(req: Request, { params }: Params) {
     return Response.json({ err: "invalid request" }, { status: 400 });
   }
 
-  const res = await sb(`posts?id=eq.${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
+  try {
+    const post = await replacePost(id, {
       title: body.title,
       slug: body.slug,
       content: body.content ?? "",
       published: body.published ?? false,
-      updated_at: new Date().toISOString(),
-    }),
-  });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+    });
+    if (!post) return Response.json({ error: "not found" }, { status: 404 });
+    return Response.json(post);
+  } catch (e) {
+    return serverError(e);
   }
-  const rows: PostRow[] = await res.json();
-  if (!rows.length) {
-    return Response.json({ error: "not found" }, { status: 404 });
-  }
-  return Response.json(toGoPost(rows[0]));
 }
 
 export async function DELETE(req: Request, { params }: Params) {
@@ -61,9 +53,10 @@ export async function DELETE(req: Request, { params }: Params) {
   if (!UUID_RE.test(id)) {
     return Response.json({ error: "Invalid id" }, { status: 400 });
   }
-  const res = await sb(`posts?id=eq.${id}`, { method: "DELETE" });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    await removePost(id);
+    return new Response(null, { status: 204 });
+  } catch (e) {
+    return serverError(e);
   }
-  return new Response(null, { status: 204 });
 }

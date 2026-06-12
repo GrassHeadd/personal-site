@@ -1,13 +1,12 @@
-import { sb, authorized, unauthorized } from "@/shared/db";
-import { toGoPost, type PostRow } from "@/features/talkerinos/db";
+import { authorized, serverError, unauthorized } from "@/shared/db";
+import { insertPost, listPosts } from "@/features/talkerinos/model";
 
 export async function GET() {
-  const res = await sb("posts?published=eq.true&order=created_at.desc");
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    return Response.json(await listPosts(true));
+  } catch (e) {
+    return serverError(e);
   }
-  const rows: PostRow[] = await res.json();
-  return Response.json(rows.map(toGoPost));
 }
 
 export async function POST(req: Request) {
@@ -18,22 +17,14 @@ export async function POST(req: Request) {
     return Response.json({ err: "invalid request" }, { status: 400 });
   }
 
-  const now = new Date().toISOString();
-  const res = await sb("posts", {
-    method: "POST",
-    body: JSON.stringify({
-      id: crypto.randomUUID(),
+  try {
+    const post = await insertPost({
       title: body.title,
       slug: body.slug,
       content: body.content ?? "",
-      published: false,
-      created_at: now,
-      updated_at: now,
-    }),
-  });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+    });
+    return Response.json(post, { status: 201 });
+  } catch (e) {
+    return serverError(e);
   }
-  const [row]: PostRow[] = await res.json();
-  return Response.json(toGoPost(row), { status: 201 });
 }

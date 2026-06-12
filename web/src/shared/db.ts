@@ -32,3 +32,10 @@ export function authorized(req: Request): boolean {
 
 export const unauthorized = () =>
   Response.json({ error: "Unauthorised" }, { status: 401 });
+
+/* 500 wrapper for errors thrown by the feature models */
+export const serverError = (e: unknown) =>
+  Response.json(
+    { error: e instanceof Error ? e.message : "internal error" },
+    { status: 500 },
+  );

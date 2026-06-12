@@ -1,13 +1,13 @@
-import { sb, unauthorized } from "@/shared/db";
+import { serverError, unauthorized } from "@/shared/db";
 import { isAdmin } from "@/shared/auth";
+import { insertTodo, listTodos } from "@/features/todos/model";
 
 export async function GET() {
-  /* open items in writing order, crossed-off ones grouped after */
-  const res = await sb("todos?order=done.asc,created_at.asc");
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    return Response.json(await listTodos());
+  } catch (e) {
+    return serverError(e);
   }
-  return Response.json(await res.json());
 }
 
 export async function POST(req: Request) {
@@ -19,13 +19,9 @@ export async function POST(req: Request) {
     return Response.json({ error: "title required" }, { status: 400 });
   }
 
-  const res = await sb("todos", {
-    method: "POST",
-    body: JSON.stringify({ title }),
-  });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    return Response.json(await insertTodo(title), { status: 201 });
+  } catch (e) {
+    return serverError(e);
   }
-  const [row] = await res.json();
-  return Response.json(row, { status: 201 });
 }

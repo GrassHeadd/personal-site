@@ -1,5 +1,6 @@
-import { sb, unauthorized } from "@/shared/db";
+import { serverError, unauthorized } from "@/shared/db";
 import { isAdmin } from "@/shared/auth";
+import { insertEvent, listEvents } from "@/features/calendar/model";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -8,15 +9,16 @@ export async function GET(req: Request) {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
 
-  let q = "events?order=date.asc,created_at.asc";
-  if (from && DATE_RE.test(from)) q += `&date=gte.${from}`;
-  if (to && DATE_RE.test(to)) q += `&date=lte.${to}`;
-
-  const res = await sb(q);
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    return Response.json(
+      await listEvents({
+        from: from && DATE_RE.test(from) ? from : undefined,
+        to: to && DATE_RE.test(to) ? to : undefined,
+      }),
+    );
+  } catch (e) {
+    return serverError(e);
   }
-  return Response.json(await res.json());
 }
 
 export async function POST(req: Request) {
@@ -27,18 +29,15 @@ export async function POST(req: Request) {
     return Response.json({ error: "title and date (YYYY-MM-DD) required" }, { status: 400 });
   }
 
-  const res = await sb("events", {
-    method: "POST",
-    body: JSON.stringify({
+  try {
+    const row = await insertEvent({
       date: body.date,
       title: body.title.trim(),
       note: body.note?.trim() || null,
       color: body.color === "amber" ? "amber" : "forest",
-    }),
-  });
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+    });
+    return Response.json(row, { status: 201 });
+  } catch (e) {
+    return serverError(e);
   }
-  const [row] = await res.json();
-  return Response.json(row, { status: 201 });
 }

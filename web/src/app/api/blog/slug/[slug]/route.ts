@@ -1,18 +1,16 @@
-import { sb } from "@/shared/db";
-import { toGoPost, type PostRow } from "@/features/talkerinos/db";
+import { serverError } from "@/shared/db";
+import { getPostBySlug } from "@/features/talkerinos/model";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
-  const res = await sb(`posts?slug=eq.${encodeURIComponent(slug)}&limit=1`);
-  if (!res.ok) {
-    return Response.json({ error: await res.text() }, { status: 500 });
+  try {
+    const post = await getPostBySlug(slug);
+    if (!post) return Response.json({ error: "not found" }, { status: 404 });
+    return Response.json(post);
+  } catch (e) {
+    return serverError(e);
   }
-  const rows: PostRow[] = await res.json();
-  if (!rows.length) {
-    return Response.json({ error: "not found" }, { status: 404 });
-  }
-  return Response.json(toGoPost(rows[0]));
 }

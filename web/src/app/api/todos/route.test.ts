@@ -8,6 +8,11 @@ const { sb, isAdmin } = vi.hoisted(() => ({
 vi.mock("@/shared/db", () => ({
   sb,
   unauthorized: () => Response.json({ error: "Unauthorised" }, { status: 401 }),
+  serverError: (e: unknown) =>
+    Response.json(
+      { error: e instanceof Error ? e.message : "internal error" },
+      { status: 500 },
+    ),
 }));
 vi.mock("@/shared/auth", () => ({ isAdmin }));
 
