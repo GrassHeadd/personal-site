@@ -27,7 +27,8 @@ export default function TimeWheel({
     const el = wheel.current;
     if (el && Math.round(el.scrollTop / ROW) !== idx) {
       skipScroll.current = true;
-      el.scrollTo({ top: idx * ROW });
+      /* plain assignment: same effect as scrollTo, and jsdom-safe */
+      el.scrollTop = idx * ROW;
     }
   }, [value]);
 

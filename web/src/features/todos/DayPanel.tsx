@@ -8,7 +8,7 @@ import {
   updateEvent,
   type CalEvent,
 } from "@/features/calendar/api";
-import DayCard from "@/features/calendar/DayCard";
+import EventCard from "@/features/calendar/EventCard";
 import { fmtTime, plusOneHour } from "@/features/calendar/time";
 
 /* A full 24h timeline lives inside a fixed-height scroll window that
@@ -105,7 +105,7 @@ export default function DayPanel({
   /* optimistic times while a PUT is in flight; cleared back on failure */
   const [overrides, setOverrides] = useState<Record<string, Times>>({});
   const [hoverMin, setHoverMin] = useState<number | null>(null);
-  const [showCard, setShowCard] = useState(false);
+  const [openEvent, setOpenEvent] = useState<CalEvent | null>(null);
 
   const allDay = events.filter((e) => !e.start_time);
   const timed = events.filter((e) => e.start_time);
@@ -197,8 +197,8 @@ export default function DayPanel({
     const d = drag;
     setDrag(null);
     if (!d.moved) {
-      /* a clean click reopens the event modal */
-      setShowCard(true);
+      /* a clean click pops open that event */
+      setOpenEvent(ev);
       return;
     }
     const deltaMin = Math.round(d.deltaPx / SNAP_PX) * 15;
@@ -301,7 +301,11 @@ export default function DayPanel({
       {allDay.length > 0 && (
         <ul aria-label="all day" className="mt-3 flex flex-col gap-1">
           {allDay.map((ev) => (
-            <li key={ev.id} className="flex items-center gap-2 min-w-0">
+            <li
+              key={ev.id}
+              onClick={() => setOpenEvent(ev)}
+              className="flex items-center gap-2 min-w-0 cursor-pointer"
+            >
               <span
                 aria-hidden
                 className={`size-2 rounded-full shrink-0 ${
@@ -392,7 +396,7 @@ export default function DayPanel({
                 }
                 onPointerMove={canEdit ? (e) => moveDrag(e, ev) : undefined}
                 onPointerUp={canEdit ? () => endDrag(ev) : undefined}
-                onClick={!canEdit ? () => setShowCard(true) : undefined}
+                onClick={!canEdit ? () => setOpenEvent(ev) : undefined}
                 className={`absolute rounded px-1.5 py-0.5 overflow-hidden text-paper border border-paper ${
                   ev.color === "amber" ? "bg-amber" : "bg-forest"
                 } ${canEdit ? "cursor-grab" : "cursor-pointer"} ${
@@ -441,12 +445,11 @@ export default function DayPanel({
         </div>
       </div>
 
-      {showCard && (
-        <DayCard
-          dateKey={today}
-          events={events}
+      {openEvent && (
+        <EventCard
+          event={openEvent}
           canEdit={canEdit}
-          onClose={() => setShowCard(false)}
+          onClose={() => setOpenEvent(null)}
           onChanged={() => router.refresh()}
         />
       )}
