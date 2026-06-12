@@ -287,7 +287,7 @@ export default function DayPanel({
     e.preventDefault();
     const min = slotFromClientY(e.clientY) ?? hoverMin;
     setHoverMin(null);
-    let payload: { id?: string; title?: string };
+    let payload: { id?: string; title?: string; note?: string | null };
     try {
       payload = JSON.parse(e.dataTransfer.getData("application/json"));
     } catch {
@@ -298,6 +298,8 @@ export default function DayPanel({
     createEvent({
       date: day,
       title: payload.title,
+      /* the todo's details travel with the scheduling */
+      note: payload.note ?? undefined,
       color: "forest",
       start_time: start,
       end_time: plusOneHour(start),
@@ -311,7 +313,7 @@ export default function DayPanel({
   const onDropAllDay = (e: React.DragEvent) => {
     e.preventDefault();
     setHoverAllDay(false);
-    let payload: { id?: string; title?: string };
+    let payload: { id?: string; title?: string; note?: string | null };
     try {
       payload = JSON.parse(e.dataTransfer.getData("application/json"));
     } catch {
@@ -321,6 +323,7 @@ export default function DayPanel({
     createEvent({
       date: day,
       title: payload.title,
+      note: payload.note ?? undefined,
       color: "forest",
       todo_id: payload.id,
     })

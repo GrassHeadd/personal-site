@@ -29,6 +29,7 @@ import TodoList from "./TodoList";
 const make = (over: Partial<Todo>): Todo => ({
   id: "id-" + (over.title ?? Math.random()),
   title: "untitled",
+  note: null,
   done: false,
   done_at: null,
   created_at: "2026-06-01T00:00:00Z",
@@ -184,6 +185,47 @@ describe("TodoList", () => {
 
     expect(updateTodo).not.toHaveBeenCalled();
     expect(screen.getByText("water the plants")).toBeInTheDocument();
+  });
+
+  it("shows a todo's details under its title", () => {
+    render(
+      <TodoList
+        canEdit={false}
+        initialTodos={[make({ title: "shop", note: "milk, eggs, ramen" })]}
+      />,
+    );
+    expect(screen.getByText("milk, eggs, ramen")).toBeInTheDocument();
+  });
+
+  it("lets the admin add details inline", async () => {
+    const user = userEvent.setup();
+    const todo = make({ title: "shop" });
+    render(<TodoList canEdit initialTodos={[todo]} />);
+    updateTodo.mockResolvedValue({ ...todo, note: "milk run" });
+
+    await user.click(screen.getByRole("button", { name: "+ details" }));
+    await user.type(screen.getByLabelText('details for "shop"'), "milk run");
+    await user.keyboard("{Meta>}{Enter}{/Meta}");
+
+    expect(updateTodo).toHaveBeenCalledWith(todo.id, { note: "milk run" });
+    expect(await screen.findByText("milk run")).toBeInTheDocument();
+  });
+
+  it("collapses the crossed-off pile past eight items", async () => {
+    const user = userEvent.setup();
+    const crossed = Array.from({ length: 10 }, (_, i) =>
+      make({
+        title: `done thing ${i}`,
+        done: true,
+        done_at: `2026-06-${String(i + 1).padStart(2, "0")}T00:00:00Z`,
+      }),
+    );
+    render(<TodoList canEdit={false} initialTodos={crossed} />);
+
+    expect(screen.getAllByText(/done thing/)).toHaveLength(8);
+
+    await user.click(screen.getByRole("button", { name: /show all \(10\)/ }));
+    expect(screen.getAllByText(/done thing/)).toHaveLength(10);
   });
 
   it("uncrossing moves an item back to the open list", async () => {

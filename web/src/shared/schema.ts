@@ -15,8 +15,8 @@ export const events = pgTable(
     endTime: time("end_time"),
     /* null | daily | weekly | monthly | yearly — expanded into occurrences at read time */
     recur: text("recur"),
-    /* events spawned from a todo die with it */
-    todoId: uuid("todo_id").references(() => todos.id, { onDelete: "cascade" }),
+    /* events outlive their todo: the calendar is a record of time */
+    todoId: uuid("todo_id").references(() => todos.id, { onDelete: "set null" }),
     /* soft delete: rows are kept but hidden once stamped */
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -63,6 +63,7 @@ export const scribbles = pgTable("scribbles", {
 export const todos = pgTable("todos", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
+  note: text("note"),
   done: boolean("done").notNull().default(false),
   doneAt: timestamp("done_at", { withTimezone: true }),
   /* soft delete: rows are kept but hidden once stamped */

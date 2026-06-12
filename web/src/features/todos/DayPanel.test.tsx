@@ -123,14 +123,19 @@ describe("DayPanel", () => {
     await waitFor(() => expect(refresh).toHaveBeenCalled());
   });
 
-  it("creates an all-day event when a todo is dropped on the shelf", async () => {
+  it("creates an all-day event when a todo is dropped on the shelf, details riding along", async () => {
     createEvent.mockResolvedValue(makeEvent({ title: "water the plants" }));
     render(<DayPanel today="2026-06-12" canEdit events={[]} />);
 
     const drop = new Event("drop", { bubbles: true, cancelable: true });
     Object.assign(drop, {
       dataTransfer: {
-        getData: () => JSON.stringify({ id: "todo-1", title: "water the plants" }),
+        getData: () =>
+          JSON.stringify({
+            id: "todo-1",
+            title: "water the plants",
+            note: "the cactus too",
+          }),
       },
     });
     fireEvent(screen.getByLabelText("all day"), drop);
@@ -139,6 +144,7 @@ describe("DayPanel", () => {
       expect(createEvent).toHaveBeenCalledWith({
         date: "2026-06-12",
         title: "water the plants",
+        note: "the cactus too",
         color: "forest",
         todo_id: "todo-1",
       }),

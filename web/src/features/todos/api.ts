@@ -1,6 +1,7 @@
 export interface Todo {
   id: string;
   title: string;
+  note: string | null;
   done: boolean;
   done_at: string | null;
   created_at: string;
@@ -22,7 +23,7 @@ export async function createTodo(title: string): Promise<Todo> {
 
 export async function updateTodo(
   id: string,
-  data: { title?: string; done?: boolean },
+  data: { title?: string; note?: string | null; done?: boolean },
 ): Promise<Todo> {
   const res = await fetch(`/api/todos/${id}`, {
     method: "PATCH",

@@ -28,6 +28,9 @@ export default function TodoList({
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState("");
+  const [noteEditId, setNoteEditId] = useState<string | null>(null);
+  const [noteDraft, setNoteDraft] = useState("");
+  const [showAllDone, setShowAllDone] = useState(false);
   const loadError = initialTodos === null;
 
   /* todos that already have an event on today's panel show its time */
@@ -102,6 +105,23 @@ export default function TodoList({
     setEditDraft(todo.title);
   };
 
+  const startNote = (todo: Todo) => {
+    if (!canEdit) return;
+    setNoteEditId(todo.id);
+    setNoteDraft(todo.note ?? "");
+  };
+
+  /* optimistic details edit; an emptied note clears it */
+  const commitNote = (todo: Todo) => {
+    const note = noteDraft.trim() || null;
+    setNoteEditId(null);
+    if (note === todo.note) return;
+    setTodos((ts) => ts.map((t) => (t.id === todo.id ? { ...t, note } : t)));
+    updateTodo(todo.id, { note: note ?? "" }).catch(() => {
+      setTodos((ts) => ts.map((t) => (t.id === todo.id ? todo : t)));
+    });
+  };
+
   /* optimistic rename: blank or unchanged input just closes the editor */
   const commitEdit = (todo: Todo) => {
     const title = editDraft.trim();
@@ -166,7 +186,11 @@ export default function TodoList({
                     ? (e) => {
                         e.dataTransfer.setData(
                           "application/json",
-                          JSON.stringify({ id: todo.id, title: todo.title }),
+                          JSON.stringify({
+                            id: todo.id,
+                            title: todo.title,
+                            note: todo.note,
+                          }),
                         );
                         e.dataTransfer.effectAllowed = "copy";
                       }
@@ -198,19 +222,55 @@ export default function TodoList({
                     className="hand text-lg leading-snug flex-1 bg-transparent border-b border-dashed border-forest focus:outline-none"
                   />
                 ) : (
-                  <span
-                    onClick={() => startEdit(todo)}
-                    {...(canEdit && {
-                      role: "button",
-                      tabIndex: 0,
-                      onKeyDown: (e: React.KeyboardEvent) =>
-                        e.key === "Enter" && startEdit(todo),
-                      title: "click to edit",
-                    })}
-                    className={`hand text-lg leading-snug flex-1 ${canEdit ? "cursor-text" : ""}`}
-                  >
-                    {todo.title}
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <span
+                      onClick={() => startEdit(todo)}
+                      {...(canEdit && {
+                        role: "button",
+                        tabIndex: 0,
+                        onKeyDown: (e: React.KeyboardEvent) =>
+                          e.key === "Enter" && startEdit(todo),
+                        title: "click to edit",
+                      })}
+                      className={`hand text-lg leading-snug ${canEdit ? "cursor-text" : ""}`}
+                    >
+                      {todo.title}
+                    </span>
+                    {noteEditId === todo.id ? (
+                      <textarea
+                        autoFocus
+                        value={noteDraft}
+                        onChange={(e) => setNoteDraft(e.target.value)}
+                        onBlur={() => commitNote(todo)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                            e.currentTarget.blur();
+                          }
+                          if (e.key === "Escape") setNoteEditId(null);
+                        }}
+                        aria-label={`details for "${todo.title}"`}
+                        rows={2}
+                        className="hand w-full text-sm text-ink-soft bg-transparent border-b border-dashed border-forest focus:outline-none resize-none mt-0.5"
+                      />
+                    ) : todo.note ? (
+                      <p
+                        onClick={canEdit ? () => startNote(todo) : undefined}
+                        title={canEdit ? "click to edit details" : undefined}
+                        className={`text-ink-soft text-sm leading-snug ${canEdit ? "cursor-text" : ""}`}
+                      >
+                        {todo.note}
+                      </p>
+                    ) : (
+                      canEdit && (
+                        <button
+                          onClick={() => startNote(todo)}
+                          className="hand text-xs text-ink-soft opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer block"
+                        >
+                          + details
+                        </button>
+                      )
+                    )}
+                  </div>
                 )}
                 {scheduledMark(todo)}
                 {canEdit && (
@@ -254,7 +314,7 @@ export default function TodoList({
                 </h2>
               </div>
               <ul className="flex flex-col">
-                {crossed.map((todo) => (
+                {(showAllDone ? crossed : crossed.slice(0, 8)).map((todo) => (
                   <li
                     key={todo.id}
                     className="group flex items-start gap-3 py-2 text-ink-soft"
@@ -276,6 +336,14 @@ export default function TodoList({
                   </li>
                 ))}
               </ul>
+              {crossed.length > 8 && (
+                <button
+                  onClick={() => setShowAllDone((v) => !v)}
+                  className="hand text-xs quiet-link cursor-pointer mt-2"
+                >
+                  {showAllDone ? "show less" : `show all (${crossed.length})`}
+                </button>
+              )}
             </>
           )}
         </div>
