@@ -50,15 +50,15 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!adminKey || !form.title.trim()) return;
+    if (!canEdit || !form.title.trim()) return;
     setBusy(true);
     setError(null);
     try {
       const data = { date: dateKey, title: form.title, note: form.note, color: form.color };
       if (editingId) {
-        await updateEvent(adminKey, editingId, data);
+        await updateEvent(editingId, data);
       } else {
-        await createEvent(adminKey, data);
+        await createEvent(data);
       }
       cancelEdit();
       onChanged();
@@ -70,7 +70,7 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
   };
 
   const handleDelete = async (id: string) => {
-    if (!adminKey) return;
+    if (!canEdit) return;
     if (confirmId !== id) {
       setConfirmId(id);
       return;
@@ -78,7 +78,7 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
     setBusy(true);
     setError(null);
     try {
-      await deleteEvent(adminKey, id);
+      await deleteEvent(id);
       setConfirmId(null);
       if (editingId === id) cancelEdit();
       onChanged();
@@ -130,7 +130,7 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
                     <p className="text-ink-soft text-sm leading-snug">{ev.note}</p>
                   )}
                 </div>
-                {adminKey && (
+                {canEdit && (
                   <span className="flex gap-2 shrink-0 text-sm">
                     <button
                       onClick={() => startEdit(ev)}
@@ -156,13 +156,13 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
           </ul>
         )}
 
-        {!adminKey && (
+        {!canEdit && (
           <p className="hand text-xs text-ink-soft/70 mt-6 pt-4 border-t border-dashed border-pencil">
-            jj scribbles in here after logging into the talkerinos admin.
+            jj scribbles in here after signing in with google.
           </p>
         )}
 
-        {adminKey && (
+        {canEdit && (
           <form onSubmit={handleSubmit} className="mt-6 pt-4 border-t border-dashed border-pencil flex flex-col gap-2.5">
             <p className="hand text-sm font-bold text-ink-soft">
               {editingId ? "edit event ✏️" : "scribble something in ✏️"}

@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { getSession } from "next-auth/react";
 
 import Navbar from "@/components/Navbar";
 import Squiggle from "@/components/Squiggle";
@@ -39,13 +40,15 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
     const now = new Date();
     setToday(now);
     setCursor(now);
-    setAdminKey(localStorage.getItem("talkerinos_api_key"));
+    /* the server only issues sessions to allowlisted google accounts,
+       so a session existing means this is jj */
+    getSession().then((s) => setCanEdit(!!s?.user?.email));
   }, []);
 
   /* visible range */
@@ -134,7 +137,7 @@ export default function CalendarPage() {
         <Squiggle className="w-44 md:w-64 h-3 mb-4" />
         <p className="text-ink-soft max-w-xl mb-10">
           What I&apos;m up to. Click a day to peek
-          {adminKey ? ", or to scribble something in" : ""}.
+          {canEdit ? ", or to scribble something in" : ""}.
         </p>
 
         {/* controls */}
@@ -273,7 +276,7 @@ export default function CalendarPage() {
         <DayCard
           dateKey={selectedDay}
           events={byDate[selectedDay] ?? []}
-          adminKey={adminKey}
+          canEdit={canEdit}
           onClose={() => setSelectedDay(null)}
           onChanged={refetch}
         />
