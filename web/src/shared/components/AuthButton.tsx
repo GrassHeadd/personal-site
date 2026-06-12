@@ -1,35 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-type State = "checking" | "out" | "asking" | "in";
+type State = "out" | "asking" | "in";
 
-const AuthButton = () => {
-  const [state, setState] = useState<State>("checking");
+/* The server already knows the session (from the signed cookie), so the
+   button arrives rendered correctly — no client-side check, no flash. */
+const AuthButton = ({ initialAdmin }: { initialAdmin: boolean }) => {
+  const [state, setState] = useState<State>(initialAdmin ? "in" : "out");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [wrong, setWrong] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch("/api/auth/session", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => setState(d.admin ? "in" : "out"))
-      .catch(() => setState("out"));
-  }, []);
-
-  useEffect(() => {
     if (state === "asking") inputRef.current?.focus();
   }, [state]);
-
-  /* invisible placeholder keeps the nav links from shifting once the
-     real button appears after the session check */
-  if (state === "checking") {
-    return (
-      <span aria-hidden className="hand text-sm md:text-base invisible">
-        sign in
-      </span>
-    );
-  }
 
   if (state === "asking") {
     const submit = async (e: React.FormEvent) => {

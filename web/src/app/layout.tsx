@@ -3,6 +3,7 @@ import { Shantell_Sans, Atkinson_Hyperlegible } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/shared/components/Navbar";
+import { isAdmin } from "@/shared/auth";
 
 const shantell = Shantell_Sans({
   subsets: ["latin"],
@@ -23,15 +24,16 @@ export const metadata: Metadata = {
     "JJ's corner of the internet, projects, rambles, photos, and a slowly growing second brain.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const admin = await isAdmin();
   return (
     <html lang="en" className={`${shantell.variable} ${atkinson.variable}`}>
       <body>
-        <Navbar />
+        <Navbar initialAdmin={admin} />
         {children}
       </body>
     </html>

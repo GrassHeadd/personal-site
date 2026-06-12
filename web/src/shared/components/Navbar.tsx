@@ -5,7 +5,7 @@ import Link from "next/link";
 import { navLinks } from "../constants";
 import AuthButton from "./AuthButton";
 
-const NavBar = () => {
+const NavBar = ({ initialAdmin }: { initialAdmin: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const NavBar = () => {
               </li>
             ))}
             <li>
-              <AuthButton />
+              <AuthButton initialAdmin={initialAdmin} />
             </li>
           </ul>
         </nav>
