@@ -86,7 +86,7 @@ describe("DayPanel", () => {
     const { unmount } = render(
       <DayPanel today="2026-06-12" canEdit={false} events={[]} />,
     );
-    expect(screen.getByText(/nothing scheduled today/)).toBeInTheDocument();
+    expect(screen.getByText(/nothing scheduled this day/)).toBeInTheDocument();
     unmount();
 
     render(<DayPanel today="2026-06-12" canEdit events={[]} />);
@@ -117,6 +117,29 @@ describe("DayPanel", () => {
         color: "forest",
         start_time: "09:00:00",
         end_time: "10:00:00",
+        todo_id: "todo-1",
+      }),
+    );
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+
+  it("creates an all-day event when a todo is dropped on the shelf", async () => {
+    createEvent.mockResolvedValue(makeEvent({ title: "water the plants" }));
+    render(<DayPanel today="2026-06-12" canEdit events={[]} />);
+
+    const drop = new Event("drop", { bubbles: true, cancelable: true });
+    Object.assign(drop, {
+      dataTransfer: {
+        getData: () => JSON.stringify({ id: "todo-1", title: "water the plants" }),
+      },
+    });
+    fireEvent(screen.getByLabelText("all day"), drop);
+
+    await waitFor(() =>
+      expect(createEvent).toHaveBeenCalledWith({
+        date: "2026-06-12",
+        title: "water the plants",
+        color: "forest",
         todo_id: "todo-1",
       }),
     );

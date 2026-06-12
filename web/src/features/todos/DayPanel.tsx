@@ -115,6 +115,7 @@ export default function DayPanel({
   /* optimistic times while a PUT is in flight; cleared back on failure */
   const [overrides, setOverrides] = useState<Record<string, Times>>({});
   const [hoverMin, setHoverMin] = useState<number | null>(null);
+  const [hoverAllDay, setHoverAllDay] = useState(false);
   const [openEvent, setOpenEvent] = useState<CalEvent | null>(null);
   /* which day the panel is showing; ← → walk it, "today" snaps back */
   const [day, setDay] = useState(today);
@@ -306,6 +307,27 @@ export default function DayPanel({
       .catch(() => {});
   };
 
+  /* dropping on the shelf makes it an all-day event (no times at all) */
+  const onDropAllDay = (e: React.DragEvent) => {
+    e.preventDefault();
+    setHoverAllDay(false);
+    let payload: { id?: string; title?: string };
+    try {
+      payload = JSON.parse(e.dataTransfer.getData("application/json"));
+    } catch {
+      return;
+    }
+    if (!payload?.id || !payload?.title) return;
+    createEvent({
+      date: day,
+      title: payload.title,
+      color: "forest",
+      todo_id: payload.id,
+    })
+      .then(reload)
+      .catch(() => {});
+  };
+
   return (
     <section className="sketch-border-soft bg-paper px-4 py-5">
       <div className="flex items-baseline justify-between gap-2">
@@ -343,6 +365,15 @@ export default function DayPanel({
         <NoteLine kind="day" anchor={day} canEdit={canEdit} className="block mt-1.5" />
       )}
 
+      {/* a clean banner instead of text floating over the gridlines */}
+      {timed.length === 0 && allDay.length === 0 && (
+        <p className="sketch-dashed hand text-sm text-ink-soft text-center px-3 py-2 mt-3 -rotate-[0.3deg]">
+          {canEdit
+            ? "nothing scheduled. drag a to-do in."
+            : "nothing scheduled this day."}
+        </p>
+      )}
+
       {/* whole-day density strip: where the day is busy, at a glance */}
       {timed.length > 0 && (
         <div
@@ -367,27 +398,51 @@ export default function DayPanel({
         </div>
       )}
 
-      {allDay.length > 0 && (
-        <ul aria-label="all day" className="mt-3 flex flex-col gap-1">
-          {allDay.map((ev) => (
-            <li
-              key={ev.id}
-              onClick={() => setOpenEvent(ev)}
-              className="flex items-center gap-2 min-w-0 cursor-pointer"
-            >
-              <span
-                aria-hidden
-                className={`size-2 rounded-full shrink-0 ${
-                  ev.color === "amber" ? "bg-amber" : "bg-forest"
-                }`}
-              />
-              <span className="hand text-sm truncate">
-                {ev.todo_id && todoGlyph}
-                {ev.title}
-              </span>
-            </li>
-          ))}
-        </ul>
+      {/* all-day shelf: drop a to-do here to skip the clock entirely */}
+      {(allDay.length > 0 || canEdit) && (
+        <div
+          aria-label="all day"
+          onDragOver={
+            canEdit
+              ? (e) => {
+                  e.preventDefault();
+                  setHoverAllDay(true);
+                }
+              : undefined
+          }
+          onDragLeave={canEdit ? () => setHoverAllDay(false) : undefined}
+          onDrop={canEdit ? onDropAllDay : undefined}
+          className={`mt-3 rounded border border-dashed px-2.5 py-1.5 transition-colors ${
+            hoverAllDay ? "border-forest bg-forest/10" : "border-pencil"
+          }`}
+        >
+          {allDay.length === 0 ? (
+            <span className="hand text-xs text-ink-soft/70">
+              all day — drop a to-do here
+            </span>
+          ) : (
+            <ul className="flex flex-col gap-1">
+              {allDay.map((ev) => (
+                <li
+                  key={ev.id}
+                  onClick={() => setOpenEvent(ev)}
+                  className="flex items-center gap-2 min-w-0 cursor-pointer"
+                >
+                  <span
+                    aria-hidden
+                    className={`size-2 rounded-full shrink-0 ${
+                      ev.color === "amber" ? "bg-amber" : "bg-forest"
+                    }`}
+                  />
+                  <span className="hand text-sm truncate">
+                    {ev.todo_id && todoGlyph}
+                    {ev.title}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       <div
@@ -415,17 +470,6 @@ export default function DayPanel({
               </span>
             </div>
           ))}
-
-          {timed.length === 0 && allDay.length === 0 && (
-            <p
-              className="hand text-sm text-ink-soft absolute inset-x-0 text-center -rotate-1 opacity-70 pointer-events-none"
-              style={{ top: 7 * HOUR_PX + 40 }}
-            >
-              {canEdit
-                ? "nothing scheduled. drag a to-do in."
-                : "nothing scheduled today."}
-            </p>
-          )}
 
           {hoverMin != null && (
             <div

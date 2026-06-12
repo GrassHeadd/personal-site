@@ -233,6 +233,6 @@ describe("TodoList", () => {
     );
 
     expect(screen.getByRole("heading", { name: /today/ })).toBeInTheDocument();
-    expect(screen.getByText(/nothing scheduled today/)).toBeInTheDocument();
+    expect(screen.getByText(/nothing scheduled this day/)).toBeInTheDocument();
   });
 });
