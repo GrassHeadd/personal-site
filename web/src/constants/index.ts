@@ -3,6 +3,7 @@ import type { NavLink, ExpCard } from "../types";
 const navLinks: NavLink[] = [
   { name: "app hub", link: "/projects" },
   { name: "calendar", link: "/calendar" },
+  { name: "to-dos", link: "/todos" },
   { name: "talkerinos", link: "/talkerinos" },
 ];
 
