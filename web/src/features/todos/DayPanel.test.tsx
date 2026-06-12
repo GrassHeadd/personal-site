@@ -5,15 +5,24 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { CalEvent } from "@/features/calendar/api";
 
-const { createEvent, updateEvent, deleteEvent, refresh } = vi.hoisted(() => ({
-  createEvent: vi.fn(),
-  updateEvent: vi.fn(),
-  deleteEvent: vi.fn(),
-  refresh: vi.fn(),
-}));
+const { createEvent, updateEvent, deleteEvent, getNotes, saveNote, refresh } =
+  vi.hoisted(() => ({
+    createEvent: vi.fn(),
+    updateEvent: vi.fn(),
+    deleteEvent: vi.fn(),
+    getNotes: vi.fn(() => Promise.resolve([])),
+    saveNote: vi.fn(),
+    refresh: vi.fn(),
+  }));
 
-/* deleteEvent is only here for DayCard, which the panel opens on click */
-vi.mock("@/features/calendar/api", () => ({ createEvent, updateEvent, deleteEvent }));
+/* deleteEvent/getNotes serve EventCard and NoteLine, which the panel mounts */
+vi.mock("@/features/calendar/api", () => ({
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getNotes,
+  saveNote,
+}));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import DayPanel from "./DayPanel";

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { sb } from "@/shared/db";
-import type { CalEvent } from "./api";
+import type { CalEvent, PeriodNote } from "./api";
 import { expandEvents } from "./expand";
 
 /* Data access for calendar events. Functions take already-validated
@@ -87,6 +87,63 @@ export async function replaceEvent(
 export async function removeEvent(id: string): Promise<void> {
   const now = new Date().toISOString();
   const res = await sb(`events?id=eq.${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ deleted_at: now, updated_at: now }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+/* ── period notes ─────────────────────────────────────────────────── */
+
+const shiftDays = (ymd: string, n: number) => {
+  const d = new Date(`${ymd}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
+/* Notes whose span could touch the window. The hierarchy is date math:
+   a week note's anchor can sit up to 6 days before `from`, a month's at
+   the 1st, a year's at jan 1 — no foreign keys needed. */
+export async function listNotes(from: string, to: string): Promise<PeriodNote[]> {
+  const q =
+    `period_notes?deleted_at=is.null&or=(` +
+    `and(kind.eq.day,anchor.gte.${from},anchor.lte.${to}),` +
+    `and(kind.eq.week,anchor.gte.${shiftDays(from, -6)},anchor.lte.${to}),` +
+    `and(kind.eq.month,anchor.gte.${from.slice(0, 7)}-01,anchor.lte.${to}),` +
+    `and(kind.eq.year,anchor.gte.${from.slice(0, 4)}-01-01,anchor.lte.${to})` +
+    `)&order=anchor.asc`;
+  const res = await sb(q);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+/* one note per (kind, anchor): writes are upserts, and writing over a
+   soft-deleted note resurrects it */
+export async function upsertNote(input: {
+  kind: string;
+  anchor: string;
+  note: string;
+  braindump_ref: string | null;
+}): Promise<PeriodNote> {
+  const res = await sb("period_notes?on_conflict=kind,anchor", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation,resolution=merge-duplicates",
+    },
+    body: JSON.stringify({
+      ...input,
+      deleted_at: null,
+      updated_at: new Date().toISOString(),
+    }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const [row] = await res.json();
+  return row;
+}
+
+export async function removeNote(kind: string, anchor: string): Promise<void> {
+  const now = new Date().toISOString();
+  const res = await sb(`period_notes?kind=eq.${kind}&anchor=eq.${anchor}`, {
     method: "PATCH",
     body: JSON.stringify({ deleted_at: now, updated_at: now }),
   });

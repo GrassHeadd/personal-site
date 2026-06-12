@@ -10,6 +10,7 @@ import {
   type CalEventInput,
 } from "@/features/calendar/api";
 import EventForm from "./EventForm";
+import NoteLine from "./NoteLine";
 import { fmtTime } from "./time";
 
 const SHORT_MONTHS = [
@@ -121,7 +122,8 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
             ×
           </button>
         </div>
-        <div className="border-t border-dashed border-pencil mb-4" />
+        <div className="border-t border-dashed border-pencil mb-2" />
+        <NoteLine kind="day" anchor={dateKey} canEdit={canEdit} className="block mb-3" />
 
         {events.length === 0 ? (
           <p className="text-ink-soft text-sm">nothing scribbled for this day.</p>

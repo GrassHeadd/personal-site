@@ -6,6 +6,7 @@ import DayCard from "@/features/calendar/DayCard";
 import Footer from "@/shared/components/Footer";
 import { getEvents, type CalEvent } from "@/features/calendar/api";
 import { fmtTime } from "@/features/calendar/time";
+import NoteLine from "@/features/calendar/NoteLine";
 
 const MONTHS = [
   "january", "february", "march", "april", "may", "june",
@@ -192,6 +193,17 @@ export default function CalendarPage() {
             </button>
           </span>
         </div>
+
+        {/* the week's / month's scribble, right under the heading */}
+        {today && (
+          <p className="text-center -mt-3 mb-4">
+            <NoteLine
+              kind={view === "week" ? "week" : "month"}
+              anchor={range.from}
+              canEdit={canEdit}
+            />
+          </p>
+        )}
 
         {loadError && (
           <p className="hand text-amber text-sm mb-4" role="alert">

@@ -9,6 +9,7 @@ import {
   type CalEvent,
 } from "@/features/calendar/api";
 import EventCard from "@/features/calendar/EventCard";
+import NoteLine from "@/features/calendar/NoteLine";
 import { fmtTime, plusOneHour } from "@/features/calendar/time";
 
 /* A full 24h timeline lives inside a fixed-height scroll window that
@@ -273,6 +274,9 @@ export default function DayPanel({
         today<span className="text-forest">.</span>
       </h2>
       {pretty && <p className="hand text-xs text-ink-soft mt-1">{pretty}</p>}
+      {today && (
+        <NoteLine kind="day" anchor={today} canEdit={canEdit} className="block mt-1.5" />
+      )}
 
       {/* whole-day density strip: where the day is busy, at a glance */}
       {timed.length > 0 && (

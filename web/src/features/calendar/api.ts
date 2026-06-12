@@ -65,3 +65,37 @@ export async function deleteEvent(id: string): Promise<void> {
   const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Failed to delete event");
 }
+
+/* ── period notes: one scribble per day/week/month/year ───────────── */
+
+export type NoteKind = "day" | "week" | "month" | "year";
+
+export interface PeriodNote {
+  id: string;
+  kind: NoteKind;
+  anchor: string; // the span's first day
+  note: string;
+  braindump_ref: string | null;
+}
+
+export async function getNotes(from: string, to: string): Promise<PeriodNote[]> {
+  const res = await fetch(`/api/notes?from=${from}&to=${to}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch notes");
+  return res.json();
+}
+
+/* an empty note deletes the scribble */
+export async function saveNote(data: {
+  kind: NoteKind;
+  anchor: string;
+  note: string;
+}): Promise<void> {
+  const res = await fetch("/api/notes", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to save note");
+}
