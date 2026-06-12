@@ -1,4 +1,5 @@
-import { sb, authorized, unauthorized } from "@/lib/talkerinos/db";
+import { sb, unauthorized } from "@/lib/talkerinos/db";
+import { isAdmin } from "@/auth";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (!authorized(req)) return unauthorized();
+  if (!(await isAdmin())) return unauthorized();
 
   const body = await req.json().catch(() => null);
   if (!body?.title?.trim() || !DATE_RE.test(body?.date ?? "")) {

@@ -1,4 +1,5 @@
-import { sb, authorized, unauthorized } from "@/lib/talkerinos/db";
+import { sb, unauthorized } from "@/lib/talkerinos/db";
+import { isAdmin } from "@/auth";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -7,7 +8,7 @@ const UUID_RE =
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function PUT(req: Request, { params }: Params) {
-  if (!authorized(req)) return unauthorized();
+  if (!(await isAdmin())) return unauthorized();
 
   const { id } = await params;
   if (!UUID_RE.test(id)) {
@@ -38,8 +39,8 @@ export async function PUT(req: Request, { params }: Params) {
   return Response.json(rows[0]);
 }
 
-export async function DELETE(req: Request, { params }: Params) {
-  if (!authorized(req)) return unauthorized();
+export async function DELETE(_req: Request, { params }: Params) {
+  if (!(await isAdmin())) return unauthorized();
 
   const { id } = await params;
   if (!UUID_RE.test(id)) {

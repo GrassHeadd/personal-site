@@ -13,6 +13,9 @@ export interface CalEventInput {
   color: "forest" | "amber";
 }
 
+/* Writes are authorised by the next-auth session cookie, which the browser
+   sends automatically on same-origin requests — no key to pass around. */
+
 export async function getEvents(from: string, to: string): Promise<CalEvent[]> {
   const res = await fetch(`/api/events?from=${from}&to=${to}`, {
     cache: "no-store",
@@ -21,13 +24,10 @@ export async function getEvents(from: string, to: string): Promise<CalEvent[]> {
   return res.json();
 }
 
-export async function createEvent(
-  apiKey: string,
-  data: CalEventInput,
-): Promise<CalEvent> {
+export async function createEvent(data: CalEventInput): Promise<CalEvent> {
   const res = await fetch("/api/events", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-API-Key": apiKey },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to create event");
@@ -35,23 +35,19 @@ export async function createEvent(
 }
 
 export async function updateEvent(
-  apiKey: string,
   id: string,
   data: CalEventInput,
 ): Promise<CalEvent> {
   const res = await fetch(`/api/events/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json", "X-API-Key": apiKey },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to update event");
   return res.json();
 }
 
-export async function deleteEvent(apiKey: string, id: string): Promise<void> {
-  const res = await fetch(`/api/events/${id}`, {
-    method: "DELETE",
-    headers: { "X-API-Key": apiKey },
-  });
+export async function deleteEvent(id: string): Promise<void> {
+  const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Failed to delete event");
 }

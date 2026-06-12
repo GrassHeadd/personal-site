@@ -39,13 +39,16 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
     const now = new Date();
     setToday(now);
     setCursor(now);
-    setAdminKey(localStorage.getItem("talkerinos_api_key"));
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setCanEdit(!!d.admin))
+      .catch(() => {});
   }, []);
 
   /* visible range */
@@ -114,7 +117,7 @@ export default function CalendarPage() {
   const chip = (ev: CalEvent) => (
     <span
       key={ev.id}
-      className={`hand text-xs leading-tight px-1.5 py-0.5 rounded-md text-paper truncate ${
+      className={`hand text-[11px] leading-tight px-1 py-px rounded text-paper truncate ${
         ev.color === "amber" ? "bg-amber" : "bg-forest"
       }`}
     >
@@ -127,14 +130,14 @@ export default function CalendarPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-4xl mx-auto px-6 pt-36 md:pt-44 min-h-screen">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-36 md:pt-44 min-h-screen">
         <h1 className="text-4xl md:text-6xl font-bold mb-2">
           calendar<span className="text-forest">.</span>
         </h1>
         <Squiggle className="w-44 md:w-64 h-3 mb-4" />
         <p className="text-ink-soft max-w-xl mb-10">
           What I&apos;m up to. Click a day to peek
-          {adminKey ? ", or to scribble something in" : ""}.
+          {canEdit ? ", or to scribble something in" : ""}.
         </p>
 
         {/* controls */}
@@ -181,7 +184,7 @@ export default function CalendarPage() {
         <div className="sketch-border-soft overflow-hidden bg-paper">
           <div className="grid grid-cols-7 border-b border-dashed border-pencil">
             {DAYS.map((d) => (
-              <div key={d} className="hand text-center text-sm font-bold text-ink-soft py-2">
+              <div key={d} className="hand text-center text-xs font-bold text-ink-soft py-1.5">
                 {d}
               </div>
             ))}
@@ -196,7 +199,7 @@ export default function CalendarPage() {
               {monthCells.map((key, i) => (
                 <div
                   key={key ?? `empty-${i}`}
-                  className={`min-h-20 md:min-h-24 p-1.5 md:p-2 ${
+                  className={`min-h-24 md:min-h-32 p-1 md:p-1.5 ${
                     i % 7 !== 0 ? "border-l" : ""
                   } ${i >= 7 ? "border-t" : ""} border-dashed border-pencil ${
                     key ? "cursor-pointer hover:bg-paper-2 transition-colors" : ""
@@ -206,7 +209,7 @@ export default function CalendarPage() {
                   {key && (
                     <>
                       <span
-                        className={`inline-flex items-center justify-center size-7 text-sm ${
+                        className={`inline-flex items-center justify-center size-6 text-xs ${
                           isToday(key)
                             ? "sketch-border !border-forest text-forest font-bold"
                             : "text-ink-soft"
@@ -215,10 +218,10 @@ export default function CalendarPage() {
                         {dayNumber(key)}
                       </span>
                       <div className="flex flex-col gap-1 mt-1">
-                        {(byDate[key] ?? []).slice(0, 3).map(chip)}
-                        {(byDate[key]?.length ?? 0) > 3 && (
-                          <span className="hand text-xs text-ink-soft">
-                            +{byDate[key].length - 3} more
+                        {(byDate[key] ?? []).slice(0, 5).map(chip)}
+                        {(byDate[key]?.length ?? 0) > 5 && (
+                          <span className="hand text-[11px] text-ink-soft">
+                            +{byDate[key].length - 5} more
                           </span>
                         )}
                       </div>
@@ -232,13 +235,13 @@ export default function CalendarPage() {
               {weekDays.map((key, i) => (
                 <div
                   key={key}
-                  className={`min-h-48 md:min-h-64 p-1.5 md:p-2 ${
+                  className={`min-h-64 md:min-h-80 p-1 md:p-1.5 ${
                     i !== 0 ? "border-l" : ""
                   } border-dashed border-pencil cursor-pointer hover:bg-paper-2 transition-colors`}
                   onClick={() => setSelectedDay(key)}
                 >
                   <span
-                    className={`inline-flex items-center justify-center size-7 text-sm ${
+                    className={`inline-flex items-center justify-center size-6 text-xs ${
                       isToday(key)
                         ? "sketch-border !border-forest text-forest font-bold"
                         : "text-ink-soft"
@@ -251,7 +254,7 @@ export default function CalendarPage() {
                       <div key={ev.id} className="flex flex-col">
                         {chip(ev)}
                         {ev.note && (
-                          <span className="text-ink-soft text-xs leading-snug mt-0.5 line-clamp-2">
+                          <span className="text-ink-soft text-[11px] leading-snug mt-0.5 line-clamp-2">
                             {ev.note}
                           </span>
                         )}
@@ -273,7 +276,7 @@ export default function CalendarPage() {
         <DayCard
           dateKey={selectedDay}
           events={byDate[selectedDay] ?? []}
-          adminKey={adminKey}
+          canEdit={canEdit}
           onClose={() => setSelectedDay(null)}
           onChanged={refetch}
         />

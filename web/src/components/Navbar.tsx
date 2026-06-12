@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 import { navLinks } from "../constants";
+import AuthButton from "./AuthButton";
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -38,6 +39,9 @@ const NavBar = () => {
                 </Link>
               </li>
             ))}
+            <li>
+              <AuthButton />
+            </li>
           </ul>
         </nav>
       </div>
