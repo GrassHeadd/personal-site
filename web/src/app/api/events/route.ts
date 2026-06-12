@@ -1,6 +1,6 @@
 import { serverError, unauthorized } from "@/shared/db";
 import { isAdmin } from "@/shared/auth";
-import { insertEvent, listEvents } from "@/features/calendar/model";
+import { insertEvent, listEvents, parseTime } from "@/features/calendar/model";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -30,11 +30,16 @@ export async function POST(req: Request) {
   }
 
   try {
+    const start = parseTime(body.start_time);
+    const end = parseTime(body.end_time);
     const row = await insertEvent({
       date: body.date,
       title: body.title.trim(),
       note: body.note?.trim() || null,
       color: body.color === "amber" ? "amber" : "forest",
+      start_time: start,
+      /* an end only makes sense after a start */
+      end_time: start && end && end > start ? end : null,
     });
     return Response.json(row, { status: 201 });
   } catch (e) {

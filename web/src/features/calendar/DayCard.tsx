@@ -7,6 +7,8 @@ import {
   deleteEvent,
   type CalEvent,
 } from "@/features/calendar/api";
+import TimeWheel from "./TimeWheel";
+import { fmtTime, plusOneHour } from "./time";
 
 interface DayCardProps {
   dateKey: string; // YYYY-MM-DD
@@ -16,7 +18,13 @@ interface DayCardProps {
   onChanged: () => void;
 }
 
-const emptyForm = { title: "", note: "", color: "forest" as "forest" | "amber" };
+const emptyForm = {
+  title: "",
+  note: "",
+  color: "forest" as "forest" | "amber",
+  start: null as string | null,
+  end: null as string | null,
+};
 
 const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps) => {
   const [form, setForm] = useState(emptyForm);
@@ -39,7 +47,13 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
 
   const startEdit = (ev: CalEvent) => {
     setEditingId(ev.id);
-    setForm({ title: ev.title, note: ev.note ?? "", color: ev.color });
+    setForm({
+      title: ev.title,
+      note: ev.note ?? "",
+      color: ev.color,
+      start: ev.start_time,
+      end: ev.end_time,
+    });
     setConfirmId(null);
   };
 
@@ -54,7 +68,14 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
     setBusy(true);
     setError(null);
     try {
-      const data = { date: dateKey, title: form.title, note: form.note, color: form.color };
+      const data = {
+        date: dateKey,
+        title: form.title,
+        note: form.note,
+        color: form.color,
+        start_time: form.start,
+        end_time: form.start ? form.end : null,
+      };
       if (editingId) {
         await updateEvent(editingId, data);
       } else {
@@ -125,7 +146,15 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
                   aria-hidden="true"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="hand font-bold leading-snug">{ev.title}</p>
+                  <p className="hand font-bold leading-snug">
+                    {ev.start_time && (
+                      <span className="text-forest text-sm font-bold mr-1.5">
+                        {fmtTime(ev.start_time)}
+                        {ev.end_time && `–${fmtTime(ev.end_time)}`}
+                      </span>
+                    )}
+                    {ev.title}
+                  </p>
                   {ev.note && (
                     <p className="text-ink-soft text-sm leading-snug">{ev.note}</p>
                   )}
@@ -182,6 +211,26 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
               placeholder="any details? (optional)"
               className="w-full px-3 py-2 bg-paper sketch-border-soft text-sm placeholder:text-ink-soft/60 focus:outline-none focus:border-forest"
             />
+            <div className="flex items-center gap-3">
+              <span className="hand text-sm text-ink-soft">when?</span>
+              <TimeWheel
+                value={form.start}
+                onChange={(start) =>
+                  /* picking a start defaults the end to an hour later */
+                  setForm({ ...form, start, end: start ? plusOneHour(start) : null })
+                }
+              />
+              {form.start && (
+                <>
+                  <span className="hand text-sm text-ink-soft">till</span>
+                  <TimeWheel
+                    value={form.end}
+                    nullLabel="no end"
+                    onChange={(end) => setForm({ ...form, end })}
+                  />
+                </>
+              )}
+            </div>
             <div className="flex items-center gap-3">
               {(["forest", "amber"] as const).map((c) => (
                 <button

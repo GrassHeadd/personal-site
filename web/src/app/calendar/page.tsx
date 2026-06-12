@@ -5,6 +5,7 @@ import Squiggle from "@/shared/components/Squiggle";
 import DayCard from "@/features/calendar/DayCard";
 import Footer from "@/shared/components/Footer";
 import { getEvents, type CalEvent } from "@/features/calendar/api";
+import { fmtTime } from "@/features/calendar/time";
 
 const MONTHS = [
   "january", "february", "march", "april", "may", "june",
@@ -33,17 +34,21 @@ type View = "month" | "week";
 export default function CalendarPage() {
   // render only after mount so the server/client clock can't disagree
   const [today, setToday] = useState<Date | null>(null);
-  const [view, setView] = useState<View>("month");
+  const [view, setView] = useState<View>("week");
   const [cursor, setCursor] = useState<Date>(new Date(2026, 0, 1));
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [canEdit, setCanEdit] = useState(false);
 
+  /* the page renders after mount (see `today`), so reading localStorage
+     here can't cause a hydration mismatch */
   useEffect(() => {
     const now = new Date();
     setToday(now);
     setCursor(now);
+    const saved = localStorage.getItem("cal-view");
+    if (saved === "month" || saved === "week") setView(saved);
     fetch("/api/auth/session", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setCanEdit(!!d.admin))
@@ -108,18 +113,33 @@ export default function CalendarPage() {
     return Array.from({ length: 7 }, (_, i) => ymd(addDays(start, i)));
   }, [cursor]);
 
-  const heading =
-    view === "week"
-      ? `week of ${MONTHS[startOfWeek(cursor).getMonth()].slice(0, 3)} ${startOfWeek(cursor).getDate()}`
-      : MONTHS[cursor.getMonth()];
+  const switchView = (v: View) => {
+    setView(v);
+    localStorage.setItem("cal-view", v);
+  };
 
-  const chip = (ev: CalEvent) => (
+  /* week heading shows the whole range: "jun 7–13", "jun 28 – jul 4" */
+  const weekLabel = () => {
+    const start = startOfWeek(cursor);
+    const end = addDays(start, 6);
+    const mon = (d: Date) => MONTHS[d.getMonth()].slice(0, 3);
+    return start.getMonth() === end.getMonth()
+      ? `${mon(start)} ${start.getDate()}–${end.getDate()}`
+      : `${mon(start)} ${start.getDate()} – ${mon(end)} ${end.getDate()}`;
+  };
+
+  const heading = view === "week" ? weekLabel() : MONTHS[cursor.getMonth()];
+
+  const chip = (ev: CalEvent, withTime = false) => (
     <span
       key={ev.id}
       className={`hand text-[11px] leading-tight px-1 py-px rounded text-paper truncate ${
         ev.color === "amber" ? "bg-amber" : "bg-forest"
       }`}
     >
+      {withTime && ev.start_time && (
+        <span className="font-bold">{fmtTime(ev.start_time)} </span>
+      )}
       {ev.title}
     </span>
   );
@@ -153,7 +173,7 @@ export default function CalendarPage() {
             {(["month", "week"] as const).map((v) => (
               <button
                 key={v}
-                onClick={() => setView(v)}
+                onClick={() => switchView(v)}
                 className={`hand text-sm cursor-pointer focus:outline-none focus-visible:underline focus-visible:decoration-wavy ${
                   view === v
                     ? "text-forest font-bold underline decoration-wavy underline-offset-4"
@@ -216,7 +236,7 @@ export default function CalendarPage() {
                         {dayNumber(key)}
                       </span>
                       <div className="flex flex-col gap-1 mt-1">
-                        {(byDate[key] ?? []).slice(0, 5).map(chip)}
+                        {(byDate[key] ?? []).slice(0, 5).map((ev) => chip(ev))}
                         {(byDate[key]?.length ?? 0) > 5 && (
                           <span className="hand text-[11px] text-ink-soft">
                             +{byDate[key].length - 5} more
@@ -250,7 +270,7 @@ export default function CalendarPage() {
                   <div className="flex flex-col gap-1.5 mt-2">
                     {(byDate[key] ?? []).map((ev) => (
                       <div key={ev.id} className="flex flex-col">
-                        {chip(ev)}
+                        {chip(ev, true)}
                         {ev.note && (
                           <span className="text-ink-soft text-[11px] leading-snug mt-0.5 line-clamp-2">
                             {ev.note}

@@ -1,6 +1,6 @@
 import { serverError, unauthorized } from "@/shared/db";
 import { isAdmin } from "@/shared/auth";
-import { removeEvent, replaceEvent } from "@/features/calendar/model";
+import { parseTime, removeEvent, replaceEvent } from "@/features/calendar/model";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -21,11 +21,16 @@ export async function PUT(req: Request, { params }: Params) {
   }
 
   try {
+    const start = parseTime(body.start_time);
+    const end = parseTime(body.end_time);
     const row = await replaceEvent(id, {
       date: body.date,
       title: body.title.trim(),
       note: body.note?.trim() || null,
       color: body.color === "amber" ? "amber" : "forest",
+      start_time: start,
+      /* an end only makes sense after a start */
+      end_time: start && end && end > start ? end : null,
     });
     if (!row) return Response.json({ error: "not found" }, { status: 404 });
     return Response.json(row);

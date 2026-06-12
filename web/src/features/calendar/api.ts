@@ -4,6 +4,8 @@ export interface CalEvent {
   title: string;
   note: string | null;
   color: "forest" | "amber";
+  start_time: string | null; // HH:MM:SS
+  end_time: string | null;
 }
 
 export interface CalEventInput {
@@ -11,6 +13,8 @@ export interface CalEventInput {
   title: string;
   note?: string;
   color: "forest" | "amber";
+  start_time?: string | null;
+  end_time?: string | null;
 }
 
 /* Writes are authorised by the next-auth session cookie, which the browser

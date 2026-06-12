@@ -7,17 +7,27 @@ import type { CalEvent } from "./api";
    input and return rows, or throw with the PostgREST message; auth and
    request validation stay in the route handlers. */
 
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
+
+/* "14:15" or "14:15:00" -> "14:15:00"; anything else -> null (all-day) */
+export const parseTime = (v: unknown): string | null =>
+  typeof v === "string" && TIME_RE.test(v) ? v.slice(0, 5) + ":00" : null;
+
 export interface EventInput {
   date: string;
   title: string;
   note: string | null;
   color: "forest" | "amber";
+  start_time: string | null;
+  /* omitted = leave untouched (feed-synced events carry an end time) */
+  end_time?: string | null;
 }
 
 export async function listEvents(
   range: { from?: string; to?: string } = {},
 ): Promise<CalEvent[]> {
-  let q = "events?order=date.asc,created_at.asc";
+  /* all-day events first, then timed ones in clock order */
+  let q = "events?order=date.asc,start_time.asc.nullsfirst,created_at.asc";
   if (range.from) q += `&date=gte.${range.from}`;
   if (range.to) q += `&date=lte.${range.to}`;
   const res = await sb(q);
