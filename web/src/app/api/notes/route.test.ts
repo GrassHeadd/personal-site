@@ -35,6 +35,12 @@ beforeEach(() => {
 });
 
 describe("GET /api/notes", () => {
+  it("rejects non-admins with 401", async () => {
+    isAdmin.mockResolvedValue(false);
+    expect((await get("?from=2026-06-10&to=2026-06-12")).status).toBe(401);
+    expect(sb).not.toHaveBeenCalled();
+  });
+
   it("requires a from/to window", async () => {
     expect((await get("")).status).toBe(400);
     expect((await get("?from=2026-06-01")).status).toBe(400);

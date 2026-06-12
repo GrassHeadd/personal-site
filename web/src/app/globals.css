@@ -237,4 +237,55 @@ h3,
     animation-duration: 0.01s;
     animation-delay: 0s;
   }
+
+  /* markdown inside a scribble: theme-matched, compact */
+  .scribble-md > :first-child { margin-top: 0; }
+  .scribble-md > :last-child { margin-bottom: 0; }
+  .scribble-md h1,
+  .scribble-md h2,
+  .scribble-md h3 {
+    font-family: var(--font-shantell), cursive;
+    font-weight: 700;
+    margin: 0.6em 0 0.25em;
+  }
+  .scribble-md h1 { font-size: 1.25rem; }
+  .scribble-md h2 { font-size: 1.1rem; }
+  .scribble-md h3 { font-size: 1rem; }
+  .scribble-md p { margin: 0.35em 0; line-height: 1.5; }
+  .scribble-md ul,
+  .scribble-md ol { margin: 0.35em 0; padding-left: 1.4em; }
+  .scribble-md ul { list-style: disc; }
+  .scribble-md ol { list-style: decimal; }
+  .scribble-md li { margin: 0.15em 0; }
+  .scribble-md code {
+    background: var(--paper-2);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+    font-size: 0.85em;
+  }
+  .scribble-md pre {
+    background: var(--paper-2);
+    border: 1.5px dashed var(--pencil);
+    border-radius: 10px;
+    padding: 0.6em 0.8em;
+    margin: 0.5em 0;
+    overflow-x: auto;
+  }
+  .scribble-md pre code { background: none; padding: 0; }
+  .scribble-md a {
+    color: var(--forest);
+    text-decoration: underline wavy var(--sage);
+    text-underline-offset: 4px;
+  }
+  .scribble-md blockquote {
+    border-left: 3px solid var(--sage);
+    padding-left: 0.8em;
+    margin: 0.5em 0;
+    color: var(--ink-soft);
+  }
+  .scribble-md hr {
+    border: none;
+    border-top: 1.5px dashed var(--pencil);
+    margin: 0.8em 0;
+  }
 }

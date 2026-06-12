@@ -7,6 +7,7 @@ import Footer from "@/shared/components/Footer";
 import { getEvents, type CalEvent } from "@/features/calendar/api";
 import { fmtTime } from "@/features/calendar/time";
 import NoteLine from "@/features/calendar/NoteLine";
+import PrivatePage from "@/shared/components/PrivatePage";
 
 const MONTHS = [
   "january", "february", "march", "april", "may", "june",
@@ -40,7 +41,8 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [canEdit, setCanEdit] = useState(false);
+  /* null = session still being checked */
+  const [canEdit, setCanEdit] = useState<boolean | null>(null);
 
   /* the page renders after mount (see `today`), so reading localStorage
      here can't cause a hydration mismatch */
@@ -53,7 +55,7 @@ export default function CalendarPage() {
     fetch("/api/auth/session", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setCanEdit(!!d.admin))
-      .catch(() => {});
+      .catch(() => setCanEdit(false));
   }, []);
 
   /* visible range */
@@ -68,14 +70,15 @@ export default function CalendarPage() {
   }, [cursor, view]);
 
   const refetch = useCallback(() => {
-    if (!today) return;
+    /* the events API is admin-only now; don't bother visitors with 401s */
+    if (!today || !canEdit) return;
     getEvents(range.from, range.to)
       .then((evs) => {
         setEvents(evs);
         setLoadError(false);
       })
       .catch(() => setLoadError(true));
-  }, [today, range.from, range.to]);
+  }, [today, canEdit, range.from, range.to]);
 
   useEffect(refetch, [refetch]);
 
@@ -148,6 +151,9 @@ export default function CalendarPage() {
 
   const dayNumber = (key: string) => Number(key.slice(8));
 
+  /* the calendar is admin-only; strangers get the tease */
+  if (canEdit === false) return <PrivatePage title="calendar" />;
+
   return (
     <>
       <main className="w-full max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 flex-1">
@@ -200,7 +206,7 @@ export default function CalendarPage() {
             <NoteLine
               kind={view === "week" ? "week" : "month"}
               anchor={range.from}
-              canEdit={canEdit}
+              canEdit={!!canEdit}
             />
           </p>
         )}
@@ -307,7 +313,7 @@ export default function CalendarPage() {
         <DayCard
           dateKey={selectedDay}
           events={byDate[selectedDay] ?? []}
-          canEdit={canEdit}
+          canEdit={!!canEdit}
           onClose={() => setSelectedDay(null)}
           onChanged={refetch}
         />

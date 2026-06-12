@@ -6,6 +6,8 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const KINDS = ["day", "week", "month", "year"];
 
 export async function GET(req: Request) {
+  if (!(await isAdmin())) return unauthorized();
+
   const { searchParams } = new URL(req.url);
   const from = searchParams.get("from");
   const to = searchParams.get("to");

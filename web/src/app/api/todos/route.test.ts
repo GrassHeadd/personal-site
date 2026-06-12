@@ -28,9 +28,17 @@ const post = (body: unknown) =>
 
 beforeEach(() => {
   vi.clearAllMocks();
+  /* the whole feature is admin-only now; tests opt out per-case */
+  isAdmin.mockResolvedValue(true);
 });
 
 describe("GET /api/todos", () => {
+  it("rejects non-admins with 401 without touching the db", async () => {
+    isAdmin.mockResolvedValue(false);
+    expect((await GET()).status).toBe(401);
+    expect(sb).not.toHaveBeenCalled();
+  });
+
   it("returns rows, open items first in writing order", async () => {
     const rows = [{ id: "1", title: "water the plants", done: false }];
     sb.mockResolvedValue(Response.json(rows));

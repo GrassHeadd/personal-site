@@ -48,6 +48,18 @@ export const periodNotes = pgTable(
   ],
 );
 
+/* The admin-only braindump pad. noted_on is the day a scribble was
+   written — the future mapping onto obsidian daily notes. */
+export const scribbles = pgTable("scribbles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  content: text("content").notNull(),
+  notedOn: date("noted_on").notNull(),
+  /* soft delete: rows are kept but hidden once stamped */
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const todos = pgTable("todos", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),

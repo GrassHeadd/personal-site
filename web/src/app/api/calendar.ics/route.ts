@@ -25,7 +25,15 @@ const esc = (s: string) =>
 const dt = (date: string, time: string) =>
   `${date.replace(/-/g, "")}T${time.replace(/:/g, "").padEnd(6, "0")}`;
 
-export async function GET() {
+export async function GET(req: Request) {
+  /* calendar apps can't send cookies, so the private feed rides on a
+     secret in the URL: /api/calendar.ics?key=... */
+  const key = new URL(req.url).searchParams.get("key");
+  const expected = process.env.CALENDAR_ICS_KEY || process.env.BLOG_API_KEY;
+  if (!expected || key !== expected) {
+    return new Response("Unauthorised", { status: 401 });
+  }
+
   const res = await sb("events?deleted_at=is.null&order=date.asc");
   if (!res.ok) {
     return new Response("calendar feed unavailable", { status: 500 });

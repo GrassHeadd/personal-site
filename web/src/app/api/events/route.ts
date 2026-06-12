@@ -8,6 +8,8 @@ const UUID_RE =
 const RECURS = ["daily", "weekly", "monthly", "yearly"];
 
 export async function GET(req: Request) {
+  if (!(await isAdmin())) return unauthorized();
+
   const { searchParams } = new URL(req.url);
   const from = searchParams.get("from");
   const to = searchParams.get("to");

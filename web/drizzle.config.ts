@@ -8,5 +8,5 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: { url: process.env.DATABASE_URL! },
   // only manage tables defined in the schema; never touch posts etc.
-  tablesFilter: ["events", "todos"],
+  tablesFilter: ["events", "todos", "period_notes", "scribbles"],
 });

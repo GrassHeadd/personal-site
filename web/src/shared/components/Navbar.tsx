@@ -32,7 +32,9 @@ const NavBar = ({ initialAdmin }: { initialAdmin: boolean }) => {
 
         <nav>
           <ul className="flex items-baseline gap-5 md:gap-7">
-            {navLinks.map(({ link, name }) => (
+            {navLinks
+              .filter((l) => !l.adminOnly || initialAdmin)
+              .map(({ link, name }) => (
               <li key={name}>
                 <Link href={link} className="hand text-sm md:text-base quiet-link">
                   {name}
