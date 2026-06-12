@@ -1,16 +1,36 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import emailjs from "@emailjs/browser";
 
 type Status = "idle" | "sending" | "sent" | "error";
+
+export type ContactFormValues = {
+  name: string;
+  email: string;
+  message: string;
+};
+
+/* the template may reference any of the common EmailJS variable names
+   ({{email}}, {{from_email}}, {{reply_to}}), so send them all */
+export const toTemplateParams = (form: ContactFormValues) => ({
+  name: form.name,
+  email: form.email,
+  message: form.message,
+  from_name: form.name,
+  from_email: form.email,
+  reply_to: form.email,
+});
 
 const fieldClasses =
   "w-full px-4 py-3 bg-paper sketch-border-soft text-ink placeholder:text-ink-soft/60 focus:outline-none focus:border-forest transition-colors";
 
 const ContactForm = () => {
-  const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<Status>("idle");
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState<ContactFormValues>({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -24,10 +44,10 @@ const ContactForm = () => {
     setStatus("sending");
 
     try {
-      await emailjs.sendForm(
+      await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        formRef.current!,
+        toTemplateParams(form),
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
       );
       setForm({ name: "", email: "", message: "" });
@@ -40,7 +60,6 @@ const ContactForm = () => {
 
   return (
     <form
-      ref={formRef}
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 mt-6"
     >
