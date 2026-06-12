@@ -239,6 +239,8 @@ h3,
   }
 
   /* markdown inside a scribble: theme-matched, compact */
+  /* anywhere-wrapping so one long unbroken string can't blow the card open */
+  .scribble-md { overflow-wrap: anywhere; }
   .scribble-md > :first-child { margin-top: 0; }
   .scribble-md > :last-child { margin-bottom: 0; }
   .scribble-md h1,

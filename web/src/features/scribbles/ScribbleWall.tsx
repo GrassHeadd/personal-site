@@ -152,7 +152,7 @@ export default function ScribbleWall({
                 {items.map((s, i) => (
                   <li
                     key={s.id}
-                    className={`group sketch-border-soft bg-paper px-4 py-3 ${TILTS[i % TILTS.length]}`}
+                    className={`group sketch-border-soft bg-paper px-4 py-3 overflow-hidden ${TILTS[i % TILTS.length]}`}
                   >
                     {editingId === s.id ? (
                       /* editing shows the raw markdown */
