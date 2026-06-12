@@ -5,13 +5,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { CalEvent } from "@/features/calendar/api";
 
-const { createEvent, updateEvent, refresh } = vi.hoisted(() => ({
+const { createEvent, updateEvent, deleteEvent, refresh } = vi.hoisted(() => ({
   createEvent: vi.fn(),
   updateEvent: vi.fn(),
+  deleteEvent: vi.fn(),
   refresh: vi.fn(),
 }));
 
-vi.mock("@/features/calendar/api", () => ({ createEvent, updateEvent }));
+/* deleteEvent is only here for DayCard, which the panel opens on click */
+vi.mock("@/features/calendar/api", () => ({ createEvent, updateEvent, deleteEvent }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import DayPanel from "./DayPanel";
@@ -87,11 +89,12 @@ describe("DayPanel", () => {
     render(<DayPanel today="2026-06-12" canEdit events={[]} />);
 
     /* jsdom rects are all zero, so clientY is the offset from the grid top:
-       96px = 2 hours below 7am = a 9:00am slot. jsdom has no DragEvent and
-       drops clientY from fireEvent's init, so build the event by hand. */
+       the grid runs from midnight, so 432px = 9 hours = a 9:00am slot.
+       jsdom has no DragEvent and drops clientY from fireEvent's init, so
+       build the event by hand. */
     const drop = new Event("drop", { bubbles: true, cancelable: true });
     Object.assign(drop, {
-      clientY: 96,
+      clientY: 432,
       dataTransfer: {
         getData: () => JSON.stringify({ id: "todo-1", title: "water the plants" }),
       },
@@ -146,7 +149,7 @@ describe("DayPanel", () => {
     await waitFor(() => expect(refresh).toHaveBeenCalled());
   });
 
-  it("treats a sub-4px wiggle as a click, not a move", () => {
+  it("treats a sub-4px wiggle as a click and opens the event modal", () => {
     const ev = makeEvent({ id: "ev-still", title: "standup", start_time: "09:00:00" });
     render(<DayPanel today="2026-06-12" canEdit events={[ev]} />);
 
@@ -156,5 +159,27 @@ describe("DayPanel", () => {
     fireEvent.pointerUp(block, { clientY: 102, pointerId: 1 });
 
     expect(updateEvent).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("lays overlapping events out side by side with separate lanes", () => {
+    render(
+      <DayPanel
+        today="2026-06-12"
+        canEdit={false}
+        events={[
+          makeEvent({ id: "ev-a", title: "deep work", start_time: "09:00:00", end_time: "12:00:00" }),
+          makeEvent({ id: "ev-b", title: "standup", start_time: "10:00:00", end_time: "11:00:00" }),
+        ]}
+      />,
+    );
+
+    const a = screen.getByText("deep work").closest("div")!;
+    const b = screen.getByText("standup").closest("div")!;
+    /* both squeeze to half width (jsdom normalizes `x / 2` to `0.5 * x`),
+       in different lanes */
+    expect(a.style.width).toContain("0.5");
+    expect(a.style.width).toBe(b.style.width);
+    expect(a.style.left).not.toBe(b.style.left);
   });
 });
