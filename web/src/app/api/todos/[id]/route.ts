@@ -19,13 +19,15 @@ export async function PATCH(req: Request, { params }: Params) {
     return Response.json({ error: "invalid body" }, { status: 400 });
   }
 
-  const patch: { title?: string; done?: boolean } = {};
+  const patch: { title?: string; note?: string | null; done?: boolean } = {};
   if (typeof body.title === "string") {
     if (!body.title.trim()) {
       return Response.json({ error: "title cannot be empty" }, { status: 400 });
     }
     patch.title = body.title.trim();
   }
+  /* an emptied note clears it */
+  if (typeof body.note === "string") patch.note = body.note.trim() || null;
   if (typeof body.done === "boolean") patch.done = body.done;
 
   try {

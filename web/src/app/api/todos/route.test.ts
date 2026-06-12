@@ -39,17 +39,23 @@ describe("GET /api/todos", () => {
     expect(sb).not.toHaveBeenCalled();
   });
 
-  it("returns rows, open items first in writing order", async () => {
-    const rows = [{ id: "1", title: "water the plants", done: false }];
-    sb.mockResolvedValue(Response.json(rows));
+  it("returns all open items plus the 50 newest crossed-off", async () => {
+    const open = [{ id: "1", title: "water the plants", done: false }];
+    const crossed = [{ id: "2", title: "learn accordion", done: true }];
+    sb.mockImplementation(async (q: string) =>
+      Response.json(q.includes("done=is.false") ? open : crossed),
+    );
 
     const res = await GET();
 
     expect(sb).toHaveBeenCalledWith(
-      "todos?deleted_at=is.null&order=done.asc,created_at.asc",
+      "todos?deleted_at=is.null&done=is.false&order=created_at.asc",
+    );
+    expect(sb).toHaveBeenCalledWith(
+      "todos?deleted_at=is.null&done=is.true&order=done_at.desc.nullslast&limit=50",
     );
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual(rows);
+    expect(await res.json()).toEqual([...open, ...crossed]);
   });
 
   it("propagates database errors as 500", async () => {

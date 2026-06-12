@@ -123,7 +123,7 @@ describe("DELETE /api/todos/[id]", () => {
     expect(sb).not.toHaveBeenCalled();
   });
 
-  it("soft-deletes the todo and its linked events, returns 204", async () => {
+  it("soft-deletes the todo but leaves its events alone", async () => {
     sb.mockResolvedValue(new Response(null, { status: 204 }));
 
     const res = await del(ID);
@@ -135,13 +135,8 @@ describe("DELETE /api/todos/[id]", () => {
         body: expect.stringContaining("deleted_at"),
       }),
     );
-    expect(sb).toHaveBeenCalledWith(
-      `events?todo_id=eq.${ID}&deleted_at=is.null`,
-      expect.objectContaining({
-        method: "PATCH",
-        body: expect.stringContaining("deleted_at"),
-      }),
-    );
+    /* the calendar keeps its history: exactly one db call, no cascade */
+    expect(sb).toHaveBeenCalledTimes(1);
     expect(res.status).toBe(204);
   });
 

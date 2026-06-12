@@ -1,0 +1,38 @@
+# Applies committed drizzle migrations to the production database.
+#
+# Dormant until a PROD_DATABASE_URL repo secret exists — the day dev and
+# prod databases split, add the secret and this takes over from local
+# `drizzle-kit push`. From then on: edit schema.ts, `npx drizzle-kit
+# generate`, commit the SQL with the PR; merging applies it here.
+# Keep migrations additive (nullable columns, no renames/drops alongside
+# code that needs them) so the Vercel deploy racing this job stays safe.
+name: Migrate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/drizzle/**"
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: apply migrations
+        if: ${{ env.DATABASE_URL != '' }}
+        run: npx drizzle-kit migrate
+      - name: no prod database yet
+        if: ${{ env.DATABASE_URL == '' }}
+        run: echo "PROD_DATABASE_URL secret not set — skipping (single-db mode, local drizzle-kit push rules)"

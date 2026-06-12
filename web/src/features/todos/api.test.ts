@@ -7,6 +7,7 @@ const fetchMock = vi.fn();
 const todo: Todo = {
   id: "1",
   title: "water the plants",
+  note: null,
   done: false,
   done_at: null,
   created_at: "2026-06-12T00:00:00Z",
