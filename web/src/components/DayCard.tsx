@@ -158,7 +158,7 @@ const DayCard = ({ dateKey, events, canEdit, onClose, onChanged }: DayCardProps)
 
         {!canEdit && (
           <p className="hand text-xs text-ink-soft/70 mt-6 pt-4 border-t border-dashed border-pencil">
-            jj scribbles in here after signing in with google.
+            jj scribbles in here after whispering the magic word.
           </p>
         )}
 

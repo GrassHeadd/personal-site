@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getSession } from "next-auth/react";
 
 import Navbar from "@/components/Navbar";
 import Squiggle from "@/components/Squiggle";
@@ -46,9 +45,10 @@ export default function CalendarPage() {
     const now = new Date();
     setToday(now);
     setCursor(now);
-    /* the server only issues sessions to allowlisted google accounts,
-       so a session existing means this is jj */
-    getSession().then((s) => setCanEdit(!!s?.user?.email));
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setCanEdit(!!d.admin))
+      .catch(() => {});
   }, []);
 
   /* visible range */
