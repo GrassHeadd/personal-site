@@ -45,3 +45,19 @@ export const eventQuery = z.object({
   from: isoDate.optional().catch(undefined),
   to: isoDate.optional().catch(undefined),
 });
+
+/* GET /api/notes needs a full window to anchor the per-kind widening */
+export const noteQuery = z.object({ from: isoDate, to: isoDate });
+
+/* PUT /api/notes: kind and anchor address the scribble; a blank or
+   missing note means "clear it" */
+export const noteBody = z.object({
+  kind: z.enum(["day", "week", "month", "year"]),
+  anchor: isoDate,
+  note: z.string().trim().catch(""),
+  braindump_ref: z
+    .string()
+    .trim()
+    .transform((v): string | null => v || null)
+    .catch(null),
+});
