@@ -238,6 +238,18 @@ h3,
     animation-delay: 0s;
   }
 
+  /* notepad ruling: faint lines that scroll with the text */
+  .ruled-paper {
+    line-height: 2rem;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent calc(2rem - 1px),
+      color-mix(in srgb, var(--pencil) 40%, transparent) calc(2rem - 1px),
+      color-mix(in srgb, var(--pencil) 40%, transparent) 2rem
+    );
+    background-attachment: local;
+  }
+
   /* markdown inside a scribble: theme-matched, compact */
   /* anywhere-wrapping so one long unbroken string can't blow the card open */
   .scribble-md { overflow-wrap: anywhere; }

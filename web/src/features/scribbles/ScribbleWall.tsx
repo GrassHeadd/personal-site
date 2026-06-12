@@ -124,8 +124,8 @@ export default function ScribbleWall({
             }}
             placeholder="braindump something... (# headings, - lists, **bold**)"
             aria-label="new scribble"
-            rows={5}
-            className="hand text-lg w-full bg-transparent placeholder:text-pencil focus:outline-none resize-y min-h-28"
+            rows={12}
+            className="ruled-paper hand text-lg w-full bg-transparent placeholder:text-pencil focus:outline-none resize-y min-h-64"
           />
           <div className="flex justify-end">
             <button
@@ -168,8 +168,8 @@ export default function ScribbleWall({
                           if (e.key === "Escape") setEditingId(null);
                         }}
                         aria-label="edit scribble"
-                        rows={Math.min(16, Math.max(3, editDraft.split("\n").length + 1))}
-                        className="hand text-lg w-full bg-transparent focus:outline-none resize-y"
+                        rows={Math.min(20, Math.max(4, editDraft.split("\n").length + 1))}
+                        className="ruled-paper hand text-lg w-full bg-transparent focus:outline-none resize-y"
                       />
                     ) : (
                       <div className="flex items-start gap-2">
