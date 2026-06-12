@@ -17,6 +17,13 @@ export function fmtTime(t: string | null): string {
   return `${h12}:${String(m).padStart(2, "0")}${ampm}`;
 }
 
+/* "2026-06-12" ± n days, immune to timezones via noon UTC */
+export function shiftDate(ymd: string, n: number): string {
+  const d = new Date(`${ymd}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
 /* default end = start + 1h, capped at the last slot of the day */
 export function plusOneHour(t: string): string {
   const [h, m] = t.split(":").map(Number);

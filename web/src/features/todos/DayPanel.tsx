@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 
 import {
   createEvent,
+  getEvents,
   updateEvent,
   type CalEvent,
 } from "@/features/calendar/api";
 import EventCard from "@/features/calendar/EventCard";
 import NoteLine from "@/features/calendar/NoteLine";
-import { fmtTime, plusOneHour } from "@/features/calendar/time";
+import { fmtTime, plusOneHour, shiftDate } from "@/features/calendar/time";
 
 /* A full 24h timeline lives inside a fixed-height scroll window that
    opens at the first event of the day. Each hour is 48px, so a 15-min
@@ -38,6 +39,14 @@ const toTime = (min: number) => {
 
 const hourLabel = (h: number) =>
   h === 0 ? "12a" : h < 12 ? `${h}a` : h === 12 ? "12p" : `${h - 12}p`;
+
+const SHORT_MONTHS = [
+  "jan", "feb", "mar", "apr", "may", "jun",
+  "jul", "aug", "sep", "oct", "nov", "dec",
+];
+
+const shortDate = (ymd: string) =>
+  `${SHORT_MONTHS[Number(ymd.slice(5, 7)) - 1]} ${Number(ymd.slice(8, 10))}`;
 
 type Times = { start_time: string | null; end_time: string | null };
 
@@ -107,12 +116,41 @@ export default function DayPanel({
   const [overrides, setOverrides] = useState<Record<string, Times>>({});
   const [hoverMin, setHoverMin] = useState<number | null>(null);
   const [openEvent, setOpenEvent] = useState<CalEvent | null>(null);
+  /* which day the panel is showing; ← → walk it, "today" snaps back */
+  const [day, setDay] = useState(today);
+  const [dayEvents, setDayEvents] = useState<CalEvent[]>(events);
 
-  const allDay = events.filter((e) => !e.start_time);
-  const timed = events.filter((e) => e.start_time);
+  /* today's events arrive server-side (and refresh via router.refresh);
+     other days are fetched here */
+  useEffect(() => {
+    if (day === today) {
+      setDayEvents(events);
+      return;
+    }
+    let on = true;
+    getEvents(day, day)
+      .then((evs) => on && setDayEvents(evs))
+      .catch(() => on && setDayEvents([]));
+    return () => {
+      on = false;
+    };
+  }, [day, today, events]);
+
+  /* after a mutation: today rides the server refresh, other days refetch */
+  const reload = () => {
+    router.refresh();
+    if (day !== today) {
+      getEvents(day, day)
+        .then(setDayEvents)
+        .catch(() => {});
+    }
+  };
+
+  const allDay = dayEvents.filter((e) => !e.start_time);
+  const timed = dayEvents.filter((e) => e.start_time);
 
   /* open the window on the day's first event (or 7am on a blank day);
-     mount only — jumping the scroll under the user later would be rude */
+     re-aimed when flipping days, left alone otherwise */
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -121,10 +159,10 @@ export default function DayPanel({
       : 7 * 60;
     el.scrollTop = Math.max(0, (first / 60) * HOUR_PX - 16);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [day]);
 
-  const pretty = today
-    ? new Date(`${today}T12:00:00`)
+  const pretty = day
+    ? new Date(`${day}T12:00:00`)
         .toLocaleDateString("en-US", {
           weekday: "long",
           month: "long",
@@ -161,7 +199,7 @@ export default function DayPanel({
       recur: ev.recur,
       todo_id: ev.todo_id,
     })
-      .then(() => router.refresh())
+      .then(reload)
       .catch(() => {
         setOverrides((o) => {
           const next = { ...o };
@@ -257,25 +295,52 @@ export default function DayPanel({
     if (!payload?.id || !payload?.title || min == null) return;
     const start = toTime(min);
     createEvent({
-      date: today,
+      date: day,
       title: payload.title,
       color: "forest",
       start_time: start,
       end_time: plusOneHour(start),
       todo_id: payload.id,
     })
-      .then(() => router.refresh())
+      .then(reload)
       .catch(() => {});
   };
 
   return (
     <section className="sketch-border-soft bg-paper px-4 py-5">
-      <h2 className="hand text-xl font-bold leading-none">
-        today<span className="text-forest">.</span>
-      </h2>
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="hand text-xl font-bold leading-none">
+          {day === today ? "today" : shortDate(day)}
+          <span className="text-forest">.</span>
+        </h2>
+        <span className="flex items-baseline gap-2 shrink-0">
+          <button
+            onClick={() => setDay(shiftDate(day, -1))}
+            aria-label="previous day"
+            className="hand text-sm quiet-link cursor-pointer"
+          >
+            ←
+          </button>
+          {day !== today && (
+            <button
+              onClick={() => setDay(today)}
+              className="hand text-xs quiet-link cursor-pointer"
+            >
+              today
+            </button>
+          )}
+          <button
+            onClick={() => setDay(shiftDate(day, 1))}
+            aria-label="next day"
+            className="hand text-sm quiet-link cursor-pointer"
+          >
+            →
+          </button>
+        </span>
+      </div>
       {pretty && <p className="hand text-xs text-ink-soft mt-1">{pretty}</p>}
-      {today && (
-        <NoteLine kind="day" anchor={today} canEdit={canEdit} className="block mt-1.5" />
+      {day && (
+        <NoteLine kind="day" anchor={day} canEdit={canEdit} className="block mt-1.5" />
       )}
 
       {/* whole-day density strip: where the day is busy, at a glance */}
@@ -454,7 +519,7 @@ export default function DayPanel({
           event={openEvent}
           canEdit={canEdit}
           onClose={() => setOpenEvent(null)}
-          onChanged={() => router.refresh()}
+          onChanged={reload}
         />
       )}
     </section>
