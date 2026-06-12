@@ -5,6 +5,7 @@ import Squiggle from "@/shared/components/Squiggle";
 import Footer from "@/shared/components/Footer";
 import { createTodo, deleteTodo, updateTodo, type Todo } from "@/features/todos/api";
 import type { CalEvent } from "@/features/calendar/api";
+import { fmtTime } from "@/features/calendar/time";
 import DayPanel from "@/features/todos/DayPanel";
 
 /* The server page fetches the list, the session, and today's events, so the
@@ -29,14 +30,25 @@ export default function TodoList({
   const [editDraft, setEditDraft] = useState("");
   const loadError = initialTodos === null;
 
-  /* todos that already have an event on today's panel get a small marker */
-  const scheduledIds = useMemo(
-    () =>
-      new Set(
-        todayEvents.map((e) => e.todo_id).filter((id): id is string => !!id),
-      ),
-    [todayEvents],
-  );
+  /* todos that already have an event on today's panel show its time */
+  const scheduledAt = useMemo(() => {
+    const map = new Map<string, CalEvent>();
+    for (const e of todayEvents) if (e.todo_id) map.set(e.todo_id, e);
+    return map;
+  }, [todayEvents]);
+
+  const scheduledMark = (todo: Todo) => {
+    const ev = scheduledAt.get(todo.id);
+    if (!ev) return null;
+    return (
+      <span
+        title="scheduled today"
+        className="hand text-xs text-forest mt-1.5 shrink-0"
+      >
+        {ev.start_time ? fmtTime(ev.start_time) : "today"}
+      </span>
+    );
+  };
 
   const open = useMemo(() => todos.filter((t) => !t.done), [todos]);
   const crossed = useMemo(
@@ -200,14 +212,7 @@ export default function TodoList({
                     {todo.title}
                   </span>
                 )}
-                {scheduledIds.has(todo.id) && (
-                  <span
-                    title="scheduled today"
-                    className="text-xs mt-1 shrink-0"
-                  >
-                    📅
-                  </span>
-                )}
+                {scheduledMark(todo)}
                 {canEdit && (
                   <button
                     onClick={() => remove(todo)}
@@ -258,14 +263,7 @@ export default function TodoList({
                     <span className="strike-wavy hand text-lg leading-snug flex-1 opacity-60">
                       {todo.title}
                     </span>
-                    {scheduledIds.has(todo.id) && (
-                      <span
-                        title="scheduled today"
-                        className="text-xs mt-1 shrink-0 opacity-60"
-                      >
-                        📅
-                      </span>
-                    )}
+                    {scheduledMark(todo)}
                     {canEdit && (
                       <button
                         onClick={() => remove(todo)}

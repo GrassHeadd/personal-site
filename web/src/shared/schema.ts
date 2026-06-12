@@ -17,6 +17,8 @@ export const events = pgTable(
     recur: text("recur"),
     /* events spawned from a todo die with it */
     todoId: uuid("todo_id").references(() => todos.id, { onDelete: "cascade" }),
+    /* soft delete: rows are kept but hidden once stamped */
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -28,6 +30,8 @@ export const todos = pgTable("todos", {
   title: text("title").notNull(),
   done: boolean("done").notNull().default(false),
   doneAt: timestamp("done_at", { withTimezone: true }),
+  /* soft delete: rows are kept but hidden once stamped */
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
