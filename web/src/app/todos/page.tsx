@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import Navbar from "@/components/Navbar";
 import Squiggle from "@/components/Squiggle";
 import Footer from "@/sections/Footer";
 import {
@@ -99,7 +98,6 @@ export default function TodosPage() {
 
   return (
     <>
-      <Navbar />
       <main className="max-w-2xl mx-auto px-6 pt-24 md:pt-28 min-h-screen">
         <h1 className="rise rise-1 text-3xl md:text-5xl font-bold mb-1">
           to-dos<span className="text-forest">.</span>

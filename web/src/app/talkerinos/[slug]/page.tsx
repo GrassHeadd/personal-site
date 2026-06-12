@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/sections/Footer";
 import { getPostBySlug, type Post } from "@/lib/talkerinos";
 
@@ -41,7 +40,6 @@ export default function PostPage() {
   if (loading) {
     return (
       <>
-        <Navbar />
         <main className="min-h-screen pt-32 md:pt-40 pb-20">
           <div className="max-w-3xl mx-auto px-5 md:px-10">
             <div className="text-white-50">Loading...</div>
@@ -55,7 +53,6 @@ export default function PostPage() {
   if (error || !post) {
     return (
       <>
-        <Navbar />
         <main className="min-h-screen pt-32 md:pt-40 pb-20">
           <div className="max-w-3xl mx-auto px-5 md:px-10 text-center">
             <h1 className="text-4xl font-bold mb-4">
@@ -79,7 +76,6 @@ export default function PostPage() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen pt-32 md:pt-40 pb-20">
         <article className="max-w-3xl mx-auto px-5 md:px-10">
           {/* Back link */}

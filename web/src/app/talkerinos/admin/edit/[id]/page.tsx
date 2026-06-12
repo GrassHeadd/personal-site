@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/sections/Footer";
 import {
   getPostById,
@@ -181,7 +180,6 @@ export default function EditPost() {
   if (loading) {
     return (
       <>
-        <Navbar />
         <main className="min-h-screen pt-32 md:pt-40 pb-20">
           <div className="text-center text-white-50">Loading...</div>
         </main>
@@ -193,7 +191,6 @@ export default function EditPost() {
   if (!post) {
     return (
       <>
-        <Navbar />
         <main className="min-h-screen pt-32 md:pt-40 pb-20">
           <div className="text-center text-red-400">Post not found</div>
         </main>
@@ -204,7 +201,6 @@ export default function EditPost() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <Navbar />
       <main className="flex-1 pt-24 pb-4 overflow-hidden">
         <div className="h-full max-w-7xl mx-auto px-5 md:px-10 flex flex-col">
           {/* Header */}

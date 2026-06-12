@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/sections/Footer";
 import PostCard from "@/components/PostCard";
 import Squiggle from "@/components/Squiggle";
@@ -29,7 +28,6 @@ export default function Talkerinos() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen pt-32 md:pt-40 pb-20">
         <div className="max-w-4xl mx-auto px-5 md:px-10">
           {/* Header */}

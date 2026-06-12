@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import Navbar from "@/components/Navbar";
 import ContactForm from "@/components/ContactForm";
 import Squiggle from "@/components/Squiggle";
 import Footer from "@/sections/Footer";
@@ -43,7 +42,6 @@ const plots = [
 export default function Home() {
   return (
     <>
-      <Navbar />
 
       <main className="max-w-3xl mx-auto px-6 pt-36 md:pt-44">
         {/* hero */}

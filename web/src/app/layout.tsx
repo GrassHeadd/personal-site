@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Shantell_Sans, Atkinson_Hyperlegible } from "next/font/google";
 import "./globals.css";
 
+import Navbar from "@/components/Navbar";
+
 const shantell = Shantell_Sans({
   subsets: ["latin"],
   variable: "--font-shantell",
@@ -28,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${shantell.variable} ${atkinson.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

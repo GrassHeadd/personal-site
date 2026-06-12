@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import Navbar from "@/components/Navbar";
 import Squiggle from "@/components/Squiggle";
 import DayCard from "@/components/DayCard";
 import Footer from "@/sections/Footer";
@@ -129,7 +128,6 @@ export default function CalendarPage() {
 
   return (
     <>
-      <Navbar />
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 min-h-screen">
         <h1 className="text-4xl md:text-6xl font-bold mb-2">
           calendar<span className="text-forest">.</span>

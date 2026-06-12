@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import Footer from "@/sections/Footer";
 import {
   getPosts,
@@ -237,7 +236,6 @@ export default function TalkerinosAdmin() {
   if (!isAuthed) {
     return (
       <>
-        <Navbar />
         <main className="min-h-screen pt-32 md:pt-40 pb-20">
           <div className="max-w-md mx-auto px-5">
             <h1 className="text-3xl font-bold text-cream mb-8 text-center">
@@ -285,7 +283,6 @@ export default function TalkerinosAdmin() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen pt-32 md:pt-40 pb-20">
         <div className="max-w-4xl mx-auto px-5 md:px-10">
           {/* Header */}
