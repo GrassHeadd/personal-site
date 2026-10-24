@@ -54,6 +54,7 @@ export default function Home() {
                   <span className="text-ink-soft text-base">{job.title}</span>
                   <span className="hand text-forest text-sm md:text-base md:ml-auto">{job.date}</span>
                 </div>
+                <p className="mt-3 text-base md:text-lg leading-relaxed text-ink">{job.summary}</p>
                 <ul className="mt-4 flex flex-col gap-2">
                   {job.responsibilities.map((line) => (
                     <li key={line} className="flex gap-3 text-base md:text-lg leading-relaxed text-ink">
