@@ -38,7 +38,7 @@ export default function Home() {
         </section>
 
         {/* experience */}
-        <section className="rise rise-2 mt-20 md:mt-24">
+        <section className="rise rise-2 mt-20 md:mt-24 sketch-border-soft bg-paper px-6 py-7 md:px-9 md:py-9 shadow-[4px_5px_0_var(--paper-2)]">
           <div className="section-head">
             <h2>work so far</h2>
           </div>
@@ -46,18 +46,22 @@ export default function Home() {
             {expCards.map((job, i) => (
               <li
                 key={job.company}
-                className={`py-6 ${i > 0 ? "border-t border-dashed border-pencil" : "pt-0"}`}
+                className={`py-6 md:py-7 ${i > 0 ? "border-t border-dashed border-pencil" : "pt-0 md:pt-0"} ${i === expCards.length - 1 ? "pb-0 md:pb-0" : ""}`}
               >
-                <div className="flex flex-wrap items-baseline gap-x-3 mb-1.5">
-                  <h3 className="text-lg font-bold">{job.company}</h3>
-                  <span className="text-ink-soft text-sm">{job.title}</span>
-                  <span className="hand text-forest text-sm ml-auto">{job.date}</span>
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="hand text-forest text-lg md:text-xl font-bold">0{i + 1}</span>
+                  <h3 className="text-xl md:text-2xl font-bold">{job.company}</h3>
+                  <span className="text-ink-soft text-base">{job.title}</span>
+                  <span className="hand text-forest text-sm md:text-base md:ml-auto">{job.date}</span>
                 </div>
-                {job.responsibilities.map((line) => (
-                  <p key={line} className="text-ink-soft text-[0.95rem]">
-                    {line}
-                  </p>
-                ))}
+                <ul className="mt-4 flex flex-col gap-2">
+                  {job.responsibilities.map((line) => (
+                    <li key={line} className="flex gap-3 text-base md:text-lg leading-relaxed text-ink">
+                      <span className="hand mt-0.5 shrink-0 text-forest" aria-hidden="true">↳</span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>
