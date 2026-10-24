@@ -11,9 +11,10 @@ export const expCards: ExpCard[] = [
     company: "Tencent",
     date: "Aug 2026 - now",
     responsibilities: [
-      "Built reusable tools and AI agent skills that let 8+ product managers generate, edit, and check production frontend code.",
-      "Worked with designers and product managers to move 30+ pages to a new design system.",
-      "Cut a software-tiering page's render time by about 90% by precomputing its data.",
+      "Cut average frontend feature turnaround from two days to a few hours by building MCP tools and agent skills that let 8+ product managers generate, edit, and validate production code independently.",
+      "Partnered with designers and product managers to migrate 30+ pages to UI v2, turning Figma designs into reusable design-system components.",
+      "Cut a software-tiering page's render time by about 90% by precomputing its data in a scheduled job.",
+      "Restored reliable preview environments for a team of 10 engineers by fixing stale branch-to-service routing entries.",
     ],
   },
   {
@@ -21,8 +22,12 @@ export const expCards: ExpCard[] = [
     company: "Didero",
     date: "Aug 2025 - Jul 2026",
     responsibilities: [
-      "Shipped customer-facing AI procurement workflows for 20+ enterprise clients, including feedback controls that doubled task acceptance from 40% to 80%.",
-      "Co-led an AI accounts payable workflow and worked directly with 7 enterprise clients on integrations and tailored workflows.",
+      "Shipped task notes, team and supplier instructions, and accept, edit, or reject controls for AI-proposed emails and ERP writes. Across 20+ enterprise clients, agent task acceptance rose from 40% to 80% during the rollout.",
+      "Co-led one of Didero's three core products: an AI accounts payable workflow with three-way matching, owner identification, and email follow-ups to resolve discrepancies; piloted it with 3 clients.",
+      "Worked directly with a portfolio of 7 enterprise clients, integrating ERP write-backs and tailoring agent prompts and workflows to their operations.",
+      "Built an agent trace explorer from scratch across 600K+ LLM and 540K+ tool calls per quarter, showing costs, latency, inputs, linked business records, and customer decisions.",
+      "Diagnosed a runaway agent loop that cost $9K in 18 hours, then enabled prompt caching that now serves 36% of input tokens from cache.",
+      "Built a configurable gate for inbound email, filtering 85% of roughly 30,000 monthly messages before downstream agents processed them.",
     ],
   },
   {
