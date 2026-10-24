@@ -6,9 +6,7 @@ export interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
-  { name: "app hub", link: "/projects" },
   { name: "calendar", link: "/calendar", adminOnly: true },
   { name: "to-dos", link: "/todos", adminOnly: true },
   { name: "scribbles", link: "/scribbles", adminOnly: true },
-  { name: "talkerinos", link: "/talkerinos" },
 ];

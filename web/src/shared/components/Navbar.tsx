@@ -22,12 +22,12 @@ const NavBar = ({ initialAdmin }: { initialAdmin: boolean }) => {
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="max-w-3xl mx-auto flex items-baseline justify-between px-6 py-4">
+      <div className="max-w-5xl mx-auto flex items-baseline justify-between px-6 py-4">
         <Link
           href="/"
           className="hand text-xl font-bold text-ink hover:-rotate-2 transition-transform duration-200"
         >
-          grasshut<span className="text-forest">.</span>
+          JJ&apos;s grasshut<span className="text-forest">.</span>
         </Link>
 
         <nav>

@@ -1,49 +1,14 @@
-import Link from "next/link";
-
 import ContactForm from "@/features/home/ContactForm";
+import PhotoCarousel from "@/features/home/PhotoCarousel";
 import Squiggle from "@/shared/components/Squiggle";
 import Footer from "@/shared/components/Footer";
 import { expCards } from "@/features/home/constants";
-
-const projects = [
-  {
-    name: "braindump",
-    blurb: "voice-first personal knowledge OS, my second brain in progress",
-    href: null,
-    status: "digging the foundation",
-  },
-  {
-    name: "talkerinos",
-    blurb: "thoughts, rambles, and the occasional tutorial",
-    href: "/talkerinos",
-    status: null,
-  },
-  {
-    name: "app hub",
-    blurb: "small experiments and tools, in various states of done",
-    href: "/projects",
-    status: null,
-  },
-  {
-    name: "qol+",
-    blurb: "hand-drawn quality-of-life dashboard: calendar, lists, life admin",
-    href: null,
-    status: "growing quietly",
-  },
-];
-
-const plots = [
-  { emoji: "🌱", name: "notes garden", note: "public pieces of the braindump vault", href: null },
-  { emoji: "📅", name: "calendar", note: "what i'm up to. just sprouted, take a look", href: "/calendar" },
-  { emoji: "⚙️", name: "workflows", note: "little automations running my life", href: null },
-  { emoji: "📷", name: "photo roll", note: "film & phone shots worth keeping", href: null },
-];
 
 export default function Home() {
   return (
     <>
 
-      <main className="w-full max-w-3xl mx-auto px-6 pt-36 md:pt-44 flex-1">
+      <main className="w-full max-w-5xl mx-auto px-6 pt-36 md:pt-44 flex-1">
         {/* hero */}
         <section className="rise rise-1">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
@@ -51,63 +16,29 @@ export default function Home() {
             <span className="text-forest">.</span>
           </h1>
           <Squiggle className="w-64 md:w-96 h-3 mt-2" />
-          <p className="mt-8 text-lg md:text-xl max-w-xl">
-            I build things that (hopefully) work. Full stack and AI, currently
-            at{" "}
-            <a
-              href="https://didero.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ink-link"
-            >
-              Didero
-            </a>{" "}
-            in NYC.
-          </p>
-          <p className="mt-3 text-ink-soft max-w-xl">
-            This is my grasshut: part portfolio, part notebook, eventually a
-            whole brain. Poke around.
-          </p>
-        </section>
-
-        {/* projects */}
-        <section className="rise rise-2 mt-20 md:mt-24">
-          <div className="section-head">
-            <h2>growing here</h2>
+          <div className="mt-8 grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_20rem] md:gap-4">
+            <div className="notebook-page sketch-border-soft bg-paper px-7 py-7 pl-10 md:px-8 md:py-9 md:pl-11">
+              <p className="hand text-sm text-forest mb-4">a little about me</p>
+              <p className="text-lg md:text-xl">
+                I build things that (hopefully) work, then keep tinkering until
+                they feel right. I&apos;m at{" "}
+                <strong className="text-forest underline decoration-wavy decoration-sage underline-offset-4">Tencent</strong> in
+                Singapore now. Before that, I shipped AI products at{" "}
+                <strong>Didero</strong> in NYC and worked on multilingual AI
+                research at <strong>AI Singapore</strong>.
+              </p>
+              <p className="mt-4 text-ink-soft">
+                This is my grasshut: a little patch of the internet for things
+                I&apos;ve made, lessons I&apos;ve learned, and whatever grows next.
+                Come on in.
+              </p>
+            </div>
+            <PhotoCarousel />
           </div>
-          <ul className="flex flex-col gap-1">
-            {projects.map((p) => {
-              const inner = (
-                <div className="grid md:grid-cols-[9rem_1fr] gap-x-6 gap-y-0.5 items-baseline">
-                  <span className="row-title text-lg">
-                    {p.name}
-                    {p.href && <span className="text-forest"> →</span>}
-                  </span>
-                  <span className="text-ink-soft">
-                    {p.blurb}
-                    {p.status && (
-                      <span className="hand text-forest text-sm"> · {p.status}</span>
-                    )}
-                  </span>
-                </div>
-              );
-              return (
-                <li key={p.name}>
-                  {p.href ? (
-                    <Link href={p.href} className="row-link">
-                      {inner}
-                    </Link>
-                  ) : (
-                    <div className="row-link cursor-default">{inner}</div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
         </section>
 
         {/* experience */}
-        <section className="rise rise-3 mt-20 md:mt-24">
+        <section className="rise rise-2 mt-20 md:mt-24">
           <div className="section-head">
             <h2>work so far</h2>
           </div>
@@ -132,44 +63,8 @@ export default function Home() {
           </ul>
         </section>
 
-        {/* coming soon plots */}
-        <section className="rise rise-4 mt-20 md:mt-24">
-          <div className="section-head">
-            <h2>on the way</h2>
-          </div>
-          <p className="text-ink-soft text-sm -mt-4 mb-6">
-            plots i&apos;ve marked out but haven&apos;t planted yet.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {plots.map((plot) => {
-              const inner = (
-                <>
-                  <p className="hand font-bold">
-                    <span aria-hidden="true">{plot.emoji}</span> {plot.name}
-                    {plot.href && <span className="text-forest"> →</span>}
-                  </p>
-                  <p className="text-ink-soft text-sm mt-1">{plot.note}</p>
-                </>
-              );
-              return plot.href ? (
-                <Link
-                  key={plot.name}
-                  href={plot.href}
-                  className="note-card sketch-border-soft p-5 hover:border-forest"
-                >
-                  {inner}
-                </Link>
-              ) : (
-                <div key={plot.name} className="note-card sketch-dashed p-5">
-                  {inner}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
         {/* say hi */}
-        <section className="rise rise-5 mt-20 md:mt-24">
+        <section className="rise rise-3 mt-20 md:mt-24">
           <div className="sketch-border p-6 md:p-8 -rotate-[0.4deg]">
           <h2 className="text-xl md:text-2xl font-bold">
             say hi<span className="text-forest">.</span>
